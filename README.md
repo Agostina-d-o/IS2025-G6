@@ -2,6 +2,7 @@
 
 Proyecto para registrar ingresos de pacientes a la sala de urgencias y atenderlos, priorizando por nivel de emergencia y, en empate, por fecha/hora de ingreso. 
 Incluye tests BDD (Cucumber) que cubren los criterios de aceptación de la US 001 (moduloUrgencias).
+* GRUPO N° 6 - Comisión 4k1 - IS2025
 
 ## Requisitos
 - SDK: Java Amazon Coretto 22.0.1
