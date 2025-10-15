@@ -67,10 +67,6 @@ Feature: Modulo de Urgencias
 
     Then el sistema muestra el siguiente error: "La frecuencia respiratoria no puede ser negativa"
 
-
-
-    #Agregados por Grupo 6
-
   # Crear paciente si no existe antes de registrar su ingreso
   Scenario: Ingreso de paciente no registrado
     Given que el paciente con los siguientes datos no existe en el sistema:
@@ -100,8 +96,6 @@ Feature: Modulo de Urgencias
       | Dolor abdominal intenso | Urgencia | 80 | 18 |        | Falta la tensión arterial o tiene un formato erróneo |
       | Dolor abdominal intenso | Urgencia | 80 | 18 | 120/   | Falta la tensión arterial o tiene un formato erróneo |
       | Dolor abdominal intenso | Urgencia | 80 | 18 | 120-80  | Falta la tensión arterial o tiene un formato erróneo |
-
-
 
 
   # No ingresar tensión arterial con alguna de sus frecuencias negativas
