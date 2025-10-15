@@ -5,12 +5,15 @@ import org.example.domain.Enfermera;
 import org.example.domain.Ingreso;
 import org.example.domain.NivelEmergencia;
 import org.example.domain.Paciente;
+import org.example.domain.queue.ColaAtencion;
+
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class ServicioUrgencias {
+
+    private final ColaAtencion colaAtencion = new ColaAtencion();
 
     //SEGREGACION DE INTERFAZ
     //PATRON ADAPTADOR
@@ -21,7 +24,7 @@ public class ServicioUrgencias {
     //INYECCION DE DEPENDENCIA -> Pruebas
     public ServicioUrgencias(RepositorioPacientes dbPacientes) {
         this.dbPacientes = dbPacientes;
-        this.listaEspera = new ArrayList<>();
+        this.listaEspera = new ArrayList<>(); //ahora se usa ColaAtencion
     }
 
 
@@ -60,11 +63,16 @@ public class ServicioUrgencias {
                 frecuenciaSistolica,
                 frecuenciaDiastolica);
 
+        colaAtencion.agregar(ingreso);
+
+        /*
         listaEspera.add(ingreso);
         listaEspera.sort(Ingreso::compareTo);
+        */
     }
 
     public List<Ingreso> obtenerIngresosPendientes(){
-        return this.listaEspera;
+        //return this.listaEspera;
+        return colaAtencion.verComoLista();
     }
 }
