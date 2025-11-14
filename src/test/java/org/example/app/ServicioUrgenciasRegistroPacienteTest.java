@@ -161,5 +161,4 @@ class ServicioUrgenciasRegistroPacienteTest {
         verifyNoInteractions(validadorOS);
     }
 
-
 }
