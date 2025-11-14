@@ -1,53 +1,73 @@
 package org.example.app;
 
 import org.example.app.interfaces.RepositorioPacientes;
+import org.example.app.interfaces.ValidadorObraSocial;
 import org.example.domain.Enfermera;
 import org.example.domain.Ingreso;
 import org.example.domain.NivelEmergencia;
 import org.example.domain.Paciente;
 import org.example.domain.queue.ColaAtencion;
+import org.example.domain.valueobject.AfiliacionObraSocial;
+import org.example.domain.valueobject.Domicilio;
 
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 
 public class ServicioUrgencias {
 
     private final ColaAtencion colaAtencion = new ColaAtencion();
+    private ValidadorObraSocial validadorObraSocial;
 
     //SEGREGACION DE INTERFAZ
     //PATRON ADAPTADOR
     private RepositorioPacientes dbPacientes;
 
-    private final List<Ingreso> listaEspera;
+
+    //private List<Ingreso> listaEspera;
 
     //INYECCION DE DEPENDENCIA -> Pruebas
-    public ServicioUrgencias(RepositorioPacientes dbPacientes) {
+    public ServicioUrgencias(RepositorioPacientes dbPacientes, ValidadorObraSocial validadorObraSocial) {
         this.dbPacientes = dbPacientes;
-        this.listaEspera = new ArrayList<>(); //ahora se usa ColaAtencion
+        this.validadorObraSocial = validadorObraSocial;
+        //this.listaEspera = new ArrayList<>(); //ahora se usa ColaAtencion
     }
 
+    // HU-002
+    public Paciente registrarPaciente(String cuil,
+                                      String nombre,
+                                      String apellido,
+                                      Domicilio domicilio,
+                                      AfiliacionObraSocial afiliacionOpcional) {
+        if (afiliacionOpcional != null) {
+            String codOS = afiliacionOpcional.getObraSocial().getCodigo();
+            String nroAf = afiliacionOpcional.getNumeroAfiliado();
+            if (!validadorObraSocial.obraSocialExiste(codOS))
+                throw new IllegalArgumentException("No se puede registrar: obra social inexistente");
+            if (!validadorObraSocial.estaAfiliado(cuil, codOS, nroAf))
+                throw new IllegalArgumentException("No se puede registrar: el paciente no está afiliado a la obra social");
+        }
+        Paciente paciente = new Paciente(cuil, nombre, apellido, domicilio, afiliacionOpcional);
+        dbPacientes.guardarPaciente(paciente);
+        return paciente;
+    }
 
+    // Urgencia: permite auto-alta “mínima” si no existe
     public void registrarUrgencia(String cuilPaciente,
-                                   Enfermera enfermera,
-                                   String informe,
+                                  Enfermera enfermera,
+                                  String informe,
                                   NivelEmergencia emergencia,
-                                   Float temperatura,
-                                   Float frecuenciaCardiaca,
-                                   Float frecuenciaRespiratoria,
-                                   Float frecuenciaSistolica,
-                                   Float frecuenciaDiastolica){
+                                  Float temperatura,
+                                  Float frecuenciaCardiaca,
+                                  Float frecuenciaRespiratoria,
+                                  Float frecuenciaSistolica,
+                                  Float frecuenciaDiastolica) {
 
-        /*
-        Paciente paciente = dbPacientes.buscarPacientePorCuil(cuilPaciente)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-
-         */
-
-        // Asegurar paciente (crear si no existe)
         Paciente paciente = dbPacientes.buscarPacientePorCuil(cuilPaciente)
                 .orElseGet(() -> {
-                    Paciente nuevo = new Paciente(cuilPaciente, "", "", "");
+                    // Alta “provisional” mínima válida (sin OS)
+                    Domicilio dummy = new Domicilio("S/D", 1, "San Miguel de Tucumán");
+                    Paciente nuevo = new Paciente(cuilPaciente, "N/D", "N/D", dummy, null);
                     dbPacientes.guardarPaciente(nuevo);
                     return nuevo;
                 });
@@ -61,14 +81,10 @@ public class ServicioUrgencias {
                 frecuenciaCardiaca,
                 frecuenciaRespiratoria,
                 frecuenciaSistolica,
-                frecuenciaDiastolica);
+                frecuenciaDiastolica
+        );
 
         colaAtencion.agregar(ingreso);
-
-        /*
-        listaEspera.add(ingreso);
-        listaEspera.sort(Ingreso::compareTo);
-        */
     }
 
     public List<Ingreso> obtenerIngresosPendientes(){
