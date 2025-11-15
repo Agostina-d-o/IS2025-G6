@@ -25,8 +25,22 @@ public class ModuloUrgenciasStepDefinitions {
 
     public ModuloUrgenciasStepDefinitions() {
         this.dbMockeada = new DBPruebaEnMemoria();
-        this.servicioUrgencias = new ServicioUrgencias(dbMockeada);
+
+        this.servicioUrgencias = new ServicioUrgencias(
+                dbMockeada,
+                new org.example.app.interfaces.ValidadorObraSocial() {
+                    @Override
+                    public boolean obraSocialExiste(String codigoObraSocial) {
+                        return true; // dummy: todo existe
+                    }
+                    @Override
+                    public boolean estaAfiliado(String cuilPaciente, String codigoObraSocial, String numeroAfiliado) {
+                        return true; // dummy: siempre afiliado
+                    }
+                }
+        );
     }
+
 
     @Given("que la siguiente enfermera esta registrada:")
     public void queLaSiguienteEnfermeraEstaRegistrada(List<Map<String, String>> tabla) {
@@ -42,9 +56,10 @@ public class ModuloUrgenciasStepDefinitions {
             String cuil = fila.get("Cuil");
             String nombre = fila.get("Nombre");
             String apellido = fila.get("Apellido");
-            String obraSocial = fila.get("Obra Social");
+            var domicilio = new org.example.domain.valueobject.Domicilio("S/D", 1, "San Miguel de Tucumán");
 
-            Paciente paciente = new Paciente(cuil, nombre, apellido, obraSocial);
+            org.example.domain.Paciente paciente =
+                    new org.example.domain.Paciente(cuil, nombre, apellido, domicilio, null);
 
             dbMockeada.guardarPaciente(paciente);
         }
