@@ -111,3 +111,11 @@
 .navbar button {
   margin-left: 1rem;
 }
+a {
+  font-weight: bold;
+  color: #2b7cff;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}

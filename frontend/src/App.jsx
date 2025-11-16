@@ -53,7 +53,7 @@ export default function App() {
           path="/pendientes"
           element={
             usuario ? (
-              <PendientesPage rol={usuario.rol} />
+              <PendientesPage usuario={usuario} />
             ) : (
               <Navigate to="/" />
             )

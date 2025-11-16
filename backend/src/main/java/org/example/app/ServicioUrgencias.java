@@ -9,11 +9,13 @@ import org.example.domain.Paciente;
 import org.example.domain.queue.ColaAtencion;
 import org.example.domain.valueobject.AfiliacionObraSocial;
 import org.example.domain.valueobject.Domicilio;
+import org.springframework.stereotype.Service;
 
 
 //import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class ServicioUrgencias {
 
     private final ColaAtencion colaAtencion = new ColaAtencion();

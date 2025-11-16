@@ -4,7 +4,9 @@ import org.example.app.interfaces.PasswordHasher;
 import org.example.app.interfaces.RepositorioUsuarios;
 import org.example.domain.Autoridad;
 import org.example.domain.Usuario;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ServicioAutenticacion {
 
     private final RepositorioUsuarios repoUsuarios;

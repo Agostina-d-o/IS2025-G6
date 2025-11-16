@@ -1,16 +1,22 @@
 import React from "react";
 
-
 export default function IngresoCard({ ingreso, mostrarBotonAtender, onAtender }) {
-return (
-<div className="ingreso-card">
-<p><strong>Paciente:</strong> {ingreso.paciente?.nombre} {ingreso.paciente?.apellido}</p>
-<p><strong>Nivel:</strong> {ingreso.nivel.nombre}</p>
-<p><strong>Informe:</strong> {ingreso.informe}</p>
-<p><strong>Ingreso:</strong> {new Date(ingreso.fechaHoraIngreso).toLocaleString()}</p>
-{mostrarBotonAtender && (
-<button onClick={onAtender}>Atender</button>
-)}
-</div>
-);
+  const {
+    paciente,
+    nivelEmergencia,
+    fechaHoraIngreso,
+    atendido
+  } = ingreso;
+
+  return (
+    <div style={{ border: "1px solid #ccc", padding: "1rem", borderRadius: "8px", width: "300px", backgroundColor: "#fefefe" }}>
+      <p><strong>Paciente:</strong> {paciente.nombre} {paciente.apellido}</p>
+      <p><strong>Emergencia:</strong> {nivelEmergencia.nombre} (Prioridad {nivelEmergencia.prioridad})</p>
+      <p><strong>Fecha:</strong> {new Date(fechaHoraIngreso).toLocaleString()}</p>
+      <p><strong>Estado:</strong> {atendido ? "Atendido" : "Pendiente"}</p>
+      {mostrarBotonAtender && !atendido && (
+        <button onClick={() => onAtender(ingreso.id)}>Atender</button>
+      )}
+    </div>
+  );
 }
