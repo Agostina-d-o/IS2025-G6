@@ -44,10 +44,10 @@ public class ModuloUrgenciasStepDefinitions {
 
     @Given("que la siguiente enfermera esta registrada:")
     public void queLaSiguienteEnfermeraEstaRegistrada(List<Map<String, String>> tabla) {
-        String nombre = tabla.getFirst().get("Nombre");
-        String apeliido = tabla.getFirst().get("Apellido");
+        String nombre = tabla.get(0).get("Nombre");
+        String apellido = tabla.get(0).get("Apellido");
 
-        enfermera = new Enfermera(nombre, apeliido);
+        enfermera = new Enfermera(nombre, apellido);
     }
 
     @Given("que estan registrados los siguientes pacientes:")
@@ -142,11 +142,11 @@ public class ModuloUrgenciasStepDefinitions {
                 .hasMessage(arg0);
     }
 
-    //**** Agregados por Grupo 6 ****
+    //**** Agregados ****
 
     @Given("que el paciente con los siguientes datos no existe en el sistema:")
     public void queElPacienteConLosSiguientesDatosNoExisteEnElSistema(List<Map<String, String>> tabla) {
-        String cuil = tabla.getFirst().get("Cuil");
+        String cuil = tabla.get(0).get("Cuil");
 
         assertThat(dbMockeada.buscarPacientePorCuil(cuil)).isEmpty();
 
@@ -208,12 +208,6 @@ public class ModuloUrgenciasStepDefinitions {
         String actual = ingreso.getEnfermera().getNombre() + " " + ingreso.getEnfermera().getApellido();
         assertThat(actual).isEqualTo(enfermeraEsperada);
     }
-
-
-
-
-
-
 
 
 
