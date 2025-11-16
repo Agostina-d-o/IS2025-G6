@@ -1,0 +1,77 @@
+:root {
+  --color-bg: #f4f6f8;
+  --color-card: #ffffff;
+  --color-primary: #2b7cff;
+  --color-primary-hover: #205dcf;
+  --color-text: #333;
+  --font: 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font);
+  min-height: 100vh;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+input, select {
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.3rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.formulario {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: var(--color-card);
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+.error {
+  color: crimson;
+  text-align: center;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
