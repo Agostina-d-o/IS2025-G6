@@ -1,4 +1,4 @@
-name: Cucumber Tests
+name: Java Tests
 
 on:
   workflow_dispatch:  # Manual trigger
@@ -24,6 +24,6 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run Cucumber tests
+      - name: Run Unit & Cucumber Tests
         run: mvn clean test
       
