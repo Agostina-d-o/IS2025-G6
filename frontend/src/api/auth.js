@@ -13,7 +13,7 @@ export async function login(email, contrasenia) {
     throw new Error(err.message || "Credenciales inválidas");
   }
 
-  return await res.json(); // { email, rol }
+  return await res.json();
 }
 
 export async function register(email, contrasenia, rol, nombre, apellido) {

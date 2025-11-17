@@ -14,7 +14,7 @@ export default function IngresoCard({
 
   const estado = ingreso.estado?.nombre || ingreso.estado || "—";
   const nivel  = ingreso.nivelEmergencia || ingreso.nivel || "—";
-  const nivelCls = (nivel || "").toUpperCase(); // p.ej. URGENCIA
+  const nivelCls = (nivel || "").toUpperCase();
 
   return (
     <div className={`card nivel-${nivelCls}`}>
@@ -40,7 +40,10 @@ export default function IngresoCard({
         </div>
         <div className="row">
           <span className="k"><span className="ico">👩‍⚕️</span>Enfermera</span>
-          <span className="v">{ingreso.enfermera}</span>
+          <span className="v">    {ingreso.enfermera
+                                    || ingreso.enfermeraNombre
+                                    || ingreso.nombreEnfermera
+                                    || "—"}</span>
         </div>
         <div className="row">
           <span className="k"><span className="ico">📝</span>Informe</span>

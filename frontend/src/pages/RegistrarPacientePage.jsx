@@ -1,16 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import RegistrarPacienteForm from "../components/RegistrarPacienteForm";
 
 export default function RegistrarPacientePage() {
-  const navigate = useNavigate();
+  const [qs] = useSearchParams();
+  const cuilPrefill = qs.get("cuil") || "";
 
-  return (
-    <RegistrarPacienteForm
-      onOk={() => {
-        alert("✅ Paciente registrado correctamente.");
-        navigate("/pendientes");
-      }}
-    />
-  );
+  return <RegistrarPacienteForm cuilPrefill={cuilPrefill} />;
 }

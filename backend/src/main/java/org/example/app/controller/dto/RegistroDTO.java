@@ -6,5 +6,7 @@ public class RegistroDTO {
     public String email;
     public String contrasenia;
     public Autoridad rol;
+    public String nombre;
+    public String apellido;
 }
 

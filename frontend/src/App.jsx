@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterUserPage from "./pages/RegisterUserPage";
 import RegistrarPacientePage from "./pages/RegistrarPacientePage";
 import RegistrarUrgenciaPage from "./pages/RegistrarUrgenciaPage";
+import PacientesRegistradosPage from "./pages/PacientesRegistradosPage.jsx";
 import PendientesPage from "./pages/PendientesPage";
 import AtencionMedicaPage from "./pages/AtencionMedicaPage";
 import Navbar from "./components/Navbar";
@@ -27,6 +28,17 @@ export default function App() {
 
 
   const rol = usuario?.rol?.toLowerCase();
+  const onLogin = async (email, pass) => {
+    const u = await login(email, pass);
+    setUsuario(u);
+    localStorage.setItem("usuario", JSON.stringify(u));
+  };
+
+  const onRegister = async (dto) => {
+    const u = await register(dto);
+    setUsuario(u);
+    localStorage.setItem("usuario", JSON.stringify(u));
+  };
 
   return (
     <Router>
@@ -57,16 +69,9 @@ export default function App() {
           }
         />
 
-        {/* Registrar urgencia – SOLO enfermera */}
         <Route
           path="/registrar-urgencia"
-          element={
-            rol === "enfermera" ? (
-              <RegistrarUrgenciaPage usuario={usuario} />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
+          element={<RegistrarUrgenciaPage usuario={usuario} />}
         />
 
         {/* Ver pendientes – enfermera y médico */}
@@ -98,6 +103,8 @@ export default function App() {
           path="/register"
           element={<RegisterUserPage setUsuario={setUsuario} />}
         />
+
+        <Route path="/pacientes" element={<PacientesRegistradosPage />} />
       </Routes>
     </Router>
   );

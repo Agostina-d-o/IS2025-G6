@@ -2,6 +2,8 @@ package org.example.app.controller;
 
 import org.example.app.ServicioUrgencias;
 import org.example.app.controller.dto.IngresoDTO;
+import org.example.app.controller.dto.IngresoFinalizadoDTO;
+import org.example.app.controller.dto.IngresoPendienteDTO;
 import org.example.domain.Ingreso;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,26 @@ public class IngresoController {
     }
 
     @GetMapping("/pendientes")
-    public List<Ingreso> obtenerPendientes() {
-        return servicioUrgencias.obtenerIngresosPendientes();
+    public List<IngresoPendienteDTO> obtenerPendientes() {
+        var lista = servicioUrgencias.obtenerIngresosPendientes();
+        return java.util.stream.IntStream.range(0, lista.size())
+                .mapToObj(i -> IngresoPendienteDTO.from(lista.get(i), i + 1))
+                .toList();
+    }
+
+    @GetMapping("/en-proceso")
+    public List<IngresoPendienteDTO> obtenerEnProceso() {
+        var lista = servicioUrgencias.obtenerIngresosEnProceso();
+        return java.util.stream.IntStream.range(0, lista.size())
+                .mapToObj(i -> IngresoPendienteDTO.from(lista.get(i), i + 1))
+                .toList();
+    }
+
+    @GetMapping("/finalizados")
+    public List<IngresoFinalizadoDTO> obtenerFinalizados() {
+        List<Ingreso> lista = servicioUrgencias.obtenerIngresosFinalizados();
+        return lista.stream().map(IngresoFinalizadoDTO::from).toList();
     }
 }
+
+

@@ -18,7 +18,7 @@ public class ServicioAutenticacion {
     }
 
     // Registro
-    public Usuario registrar(String email, String passwordPlano, Autoridad autoridad) {
+    public Usuario registrar(String email, String passwordPlano, Autoridad autoridad, String nombre, String apellido) {
         if (passwordPlano == null || passwordPlano.length() < 8)
             throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
 
@@ -26,7 +26,7 @@ public class ServicioAutenticacion {
             throw new IllegalArgumentException("El email ya está registrado");
 
         String hash = hasher.hash(passwordPlano);
-        Usuario u = new Usuario(email, hash, autoridad);
+        Usuario u = new Usuario(email, hash, autoridad, nombre, apellido);
         repoUsuarios.guardar(u);
         return u;
     }

@@ -4,7 +4,7 @@ import { crearPaciente } from "../api/pacientes";
 
 export default function RegistrarPacienteForm() {
   const [form, setForm] = useState({
-    cuil: "",
+    cuil: cuilPrefill,
     nombre: "",
     apellido: "",
     calle: "",

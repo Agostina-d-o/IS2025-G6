@@ -1,4 +1,3 @@
-// src/pages/PendientesPage.jsx
 import React, { useEffect, useState } from "react";
 import {
   getPendientes, getEnProceso, getFinalizados,
@@ -62,6 +61,8 @@ export default function PendientesPage({ usuario }) {
           <Link to="/registrar-urgencia" className="btn btn-primary">
             Registrar urgencia
           </Link>
+          <Link to="/pacientes" className="btn"
+                                  style={{ background: "#EF476F", color: "#fff" }}>Lista de pacientes</Link>
         </div>
       )}
 

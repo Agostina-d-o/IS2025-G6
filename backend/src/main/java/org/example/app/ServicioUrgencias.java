@@ -2,10 +2,7 @@ package org.example.app;
 
 import org.example.app.interfaces.RepositorioPacientes;
 import org.example.app.interfaces.ValidadorObraSocial;
-import org.example.domain.Enfermera;
-import org.example.domain.Ingreso;
-import org.example.domain.NivelEmergencia;
-import org.example.domain.Paciente;
+import org.example.domain.*;
 import org.example.domain.queue.ColaAtencion;
 import org.example.domain.valueobject.AfiliacionObraSocial;
 import org.example.domain.valueobject.Domicilio;
@@ -25,6 +22,9 @@ public class ServicioUrgencias {
     //PATRON ADAPTADOR
     private RepositorioPacientes dbPacientes;
 
+
+    private final List<Ingreso> enProceso = new java.util.ArrayList<>();
+    private final List<Ingreso> finalizados = new java.util.ArrayList<>();
 
     //private List<Ingreso> listaEspera;
 
@@ -65,6 +65,12 @@ public class ServicioUrgencias {
                                   Float frecuenciaSistolica,
                                   Float frecuenciaDiastolica) {
 
+        if (enfermera == null ||
+                (enfermera.getNombre()==null || enfermera.getNombre().isBlank()) &&
+                        (enfermera.getApellido()==null || enfermera.getApellido().isBlank())) {
+            enfermera = new Enfermera("No", "asignada");
+        }
+
         Paciente paciente = dbPacientes.buscarPacientePorCuil(cuilPaciente)
                 .orElseGet(() -> {
                     // Alta “provisional” mínima válida (sin OS)
@@ -89,8 +95,24 @@ public class ServicioUrgencias {
         colaAtencion.agregar(ingreso);
     }
 
-    public List<Ingreso> obtenerIngresosPendientes(){
-        //return this.listaEspera;
-        return colaAtencion.verComoLista();
+    public List<Ingreso> obtenerIngresosPendientes() {
+        // solo los que están en la cola y siguen en estado PENDIENTE
+        return colaAtencion.verComoLista().stream()
+                .filter(i -> i.getEstado() == EstadoIngreso.PENDIENTE)
+                .toList();
     }
+
+    public List<Ingreso> obtenerIngresosEnProceso() {
+        return List.copyOf(enProceso);
+    }
+
+    public List<Ingreso> obtenerIngresosFinalizados() {
+        return List.copyOf(finalizados);
+    }
+
+
+    public java.util.List<org.example.domain.Paciente> listarPacientesRegistrados() {
+        return dbPacientes.listarTodos();
+    }
+
 }

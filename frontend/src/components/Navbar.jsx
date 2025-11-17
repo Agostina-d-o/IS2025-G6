@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function Navbar({ usuario, onLogout }) {
   const navigate = useNavigate();
+  const rol = (usuario?.rol ?? "").toString().toLowerCase();
 
   const handleLogout = () => {
     try { localStorage.removeItem("usuario"); } catch {}
@@ -17,20 +18,25 @@ export default function Navbar({ usuario, onLogout }) {
   return (
     <div className="navbar">
       <div>
-        {/* Home: clic en la marca te lleva a /pendientes */}
         <Link to="/pendientes" style={{ textDecoration: "none", color: "inherit" }}>
           <strong>🏥 Guardia Clínica</strong>
         </Link>
         {usuario && (
           <div style={{ fontSize: ".9rem", opacity: .8 }}>
-            {nombreVisible} ({usuario.rol?.toUpperCase()})
+            {nombreVisible} ({(usuario.rol ?? "").toString().toUpperCase()})
           </div>
         )}
       </div>
 
       <div>
-        {/* accesos por rol */}
-        {usuario?.rol === "enfermera" && (
+
+        {usuario && (
+          <Link to="/pacientes" style={{ marginRight: 12 }} className="btn"
+                                                              style={{ background: "#EF476F", color: "#fff" }}>
+            Pacientes
+          </Link>
+
+        {rol === "enfermera" && (
           <>
             <Link to="/pendientes" style={{ marginRight: 12 }}>Pendientes</Link>
             <Link to="/en-proceso" style={{ marginRight: 12 }}>En proceso</Link>
@@ -40,7 +46,7 @@ export default function Navbar({ usuario, onLogout }) {
           </>
         )}
 
-        {usuario?.rol === "medico" && (
+        {rol === "medico" && (
           <>
             <Link to="/pendientes" style={{ marginRight: 12 }}>Pendientes</Link>
             <Link to="/en-proceso" style={{ marginRight: 12 }}>En proceso</Link>
@@ -49,6 +55,14 @@ export default function Navbar({ usuario, onLogout }) {
         )}
 
         <button onClick={handleLogout}>Cerrar sesión</button>
+        <Link
+          to="/pacientes"
+          className="btn"
+          style={{ marginRight: 12, background:"#EF476F", color:"#fff" }}
+        >
+          Pacientes
+        </Link>
+
       </div>
     </div>
   );

@@ -11,8 +11,9 @@ public class TensionArterial {
 
 
     public String getValorFormateado() {
-        // 120/80 mmHg
-        return String.format("%.0f/%.0f mmHg", frecuenciaSistolica, frecuenciaDiastolica);
+        String s = (frecuenciaSistolica != null)  ? frecuenciaSistolica.getValorFormateado()  : null;
+        String d = (frecuenciaDiastolica != null) ? frecuenciaDiastolica.getValorFormateado() : null;
+        if (s == null || d == null) return null;
+        return s + "/" + d;   // evita %f y el error
     }
-
 }

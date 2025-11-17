@@ -18,6 +18,7 @@ export async function registrarIngreso(ingreso) {
 
 export async function getPendientes() {
   const res = await fetch(`${API}/urgencias/pendientes`);
+  if (res.status === 404) return [];
   if (!res.ok) throw new Error("Error al obtener ingresos pendientes");
   return await res.json();
 }
@@ -50,12 +51,14 @@ export async function finalizarIngreso(idIngreso, diagnostico) {
 
 export async function getEnProceso() {
   const res = await fetch(`${API}/urgencias/en-proceso`);
+  if (res.status === 404) return [];
   if (!res.ok) throw new Error("Error al obtener ingresos en proceso");
   return res.json();
 }
 
 export async function getFinalizados() {
   const r = await fetch(`${API}/urgencias/finalizados`);
+  if (res.status === 404) return [];
   if (!r.ok) throw new Error("Error al obtener finalizados");
   return r.json();
 }

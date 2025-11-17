@@ -7,6 +7,9 @@ import org.example.domain.valueobject.TensionArterial;
 import java.time.LocalDateTime;
 
 public class Ingreso implements Comparable<Ingreso>{
+    private static long SEQ = 1L;
+    private final long id;
+    private String diagnostico;
     Paciente paciente;
     Enfermera enfermera;
     LocalDateTime fechaIngreso;
@@ -35,6 +38,8 @@ public class Ingreso implements Comparable<Ingreso>{
         if (nivelEmergencia == null) {
             throw new IllegalArgumentException("Falta el nivel de emergencia");
         }
+
+        this.id = SEQ++;
 
         this.paciente = paciente;
         this.enfermera = enfermera;
@@ -68,5 +73,37 @@ public class Ingreso implements Comparable<Ingreso>{
 
     public Enfermera getEnfermera() {
         return enfermera;
+    }
+
+    public long getId() { return id; }
+    public Paciente getPaciente() { return paciente; }
+    public NivelEmergencia getNivelEmergencia() { return nivelEmergencia; }
+    public String getDiagnostico() { return diagnostico; }
+
+    public void marcarEnProceso() { this.estado = EstadoIngreso.EN_PROCESO; }
+
+    public void finalizar(String diagnostico) {
+        this.diagnostico = diagnostico;
+        this.estado = EstadoIngreso.FINALIZADO;
+    }
+
+    public Float getTemperatura() {
+        return temperatura;
+    }
+
+    public String getInforme() {
+        return informe;
+    }
+
+    public FrecuenciaCardiaca getFrecuenciaCardiaca() {
+        return frecuenciaCardiaca;
+    }
+
+    public FrecuenciaRespiratoria getFrecuenciaRespiratoria() {
+        return frecuenciaRespiratoria;
+    }
+
+    public TensionArterial getTensionArterial() {
+        return tensionArterial;
     }
 }

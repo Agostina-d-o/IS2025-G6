@@ -1,7 +1,7 @@
-// src/components/RegistrarUrgenciaForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registrarIngreso } from "../api/ingresos";
+import { getPacienteByCuil } from "../api/pacientes";
 
 export default function RegistrarUrgenciaForm({
   usuario,
@@ -22,12 +22,41 @@ export default function RegistrarUrgenciaForm({
   const [mensaje, setMensaje] = useState(null);
   const [enviando, setEnviando] = useState(false);
   const navigate = useNavigate();
+  const [lookup, setLookup] = useState({ status: "idle", name: "", error: "" });
 
-  const enfNombre = (nombreEnfermera ?? usuario?.nombre ?? "").trim();
-  const enfApellido = (apellidoEnfermera ?? usuario?.apellido ?? "").trim();
+
+  //const enfNombre = (nombreEnfermera ?? usuario?.nombre ?? "").trim();
+  //const enfApellido = (apellidoEnfermera ?? usuario?.apellido ?? "").trim();
+
+  const enfNombre =
+    usuario?.nombre ||
+    (usuario?.email ? usuario.email.split("@")[0] : "") || // fallback rápido
+    "Enfermera";
+
+  const enfApellido =
+    usuario?.apellido || "";
 
   const actualizar = (campo, valor) =>
     setForm((f) => ({ ...f, [campo]: valor }));
+
+   const buscarPaciente = async () => {
+       const cuil = form.cuilPaciente.trim();
+       if (!cuil) return setLookup({ status: "idle", name: "", error: "" });
+
+       setLookup({ status: "loading", name: "", error: "" });
+       try {
+         const p = await getPacienteByCuil(cuil);
+         if (p) setLookup({ status: "ok", name: p.nombreCompleto, error: "" });
+         else   setLookup({ status: "notfound", name: "", error: "" });
+       } catch (e) {
+         setLookup({ status: "error", name: "", error: e.message || "Error de búsqueda" });
+       }
+     };
+
+   const irARegistrarPaciente = () => {
+
+       navigate(`/registrar-paciente?cuil=${encodeURIComponent(form.cuilPaciente.trim())}`);
+     };
 
   const validar = () => {
     const t  = form.temperatura ? Number(form.temperatura) : null;
@@ -75,7 +104,7 @@ export default function RegistrarUrgenciaForm({
       const payload = {
         cuilPaciente: form.cuilPaciente.trim(),
         informe: form.informe.trim(),
-        nivelEmergencia: form.nivelEmergencia, // valores exactos del enum
+        nivelEmergencia: form.nivelEmergencia,
         temperatura: form.temperatura ? Number(form.temperatura) : null,
         frecuenciaCardiaca: form.frecuenciaCardiaca ? Number(form.frecuenciaCardiaca) : null,
         frecuenciaRespiratoria: form.frecuenciaRespiratoria ? Number(form.frecuenciaRespiratoria) : null,
@@ -103,13 +132,39 @@ export default function RegistrarUrgenciaForm({
 
       <label>
         CUIL Paciente:
+        <div style={{ display: "flex", gap: 8 }}>
         <input
           value={form.cuilPaciente}
           onChange={(e) => actualizar("cuilPaciente", e.target.value)}
           placeholder="20XXXXXXXXX"
           required
+          style={{ flex: 1 }}
         />
-      </label>
+        <button type="button" onClick={buscarPaciente}>
+            {lookup.status === "loading" ? "Buscando..." : "Buscar"}
+                </button>
+            </div>
+        </label>
+
+
+          {lookup.status === "ok" && (
+            <p style={{ color: "#16a34a", marginTop: 6 }}>
+              ✅ Paciente encontrado: <strong>{lookup.name}</strong>
+            </p>
+          )}
+          {lookup.status === "notfound" && (
+            <p style={{ color: "#b45309", marginTop: 6 }}>
+              ⚠️ Paciente no existe.{" "}
+              <button type="button" onClick={irARegistrarPaciente} className="linklike">
+                ¿Registrarlo ahora?
+              </button>
+            </p>
+          )}
+          {lookup.status === "error" && (
+            <p style={{ color: "crimson", marginTop: 6 }}>
+              ❌ {lookup.error}
+            </p>
+          )}
 
       <label>
         Informe:

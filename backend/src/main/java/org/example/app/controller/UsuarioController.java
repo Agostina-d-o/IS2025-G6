@@ -25,7 +25,13 @@ public class UsuarioController {
     public ResponseEntity<?> login(@RequestBody CredencialesDTO cred) {
         try {
             Usuario u = servicio.login(cred.email, cred.contrasenia);
-            return ResponseEntity.ok(Map.of("email", u.getEmail(), "rol", u.getAutoridad()));
+            //return ResponseEntity.ok(Map.of("email", u.getEmail(), "rol", u.getAutoridad()));
+            return ResponseEntity.ok(Map.of(
+                    "email", u.getEmail(),
+                    "rol",   u.getAutoridad(),
+                    "nombre", u.getNombre(),
+                    "apellido", u.getApellido()
+            ));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
         }
@@ -34,8 +40,14 @@ public class UsuarioController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registrar(@RequestBody RegistroDTO dto) {
-        Usuario u = servicio.registrar(dto.email, dto.contrasenia, dto.rol);
-        return ResponseEntity.ok(Map.of("email", u.getEmail(), "rol", u.getAutoridad()));
+        Usuario u = servicio.registrar(dto.email, dto.contrasenia, dto.rol, dto.nombre, dto.apellido);
+        //return ResponseEntity.ok(Map.of("email", u.getEmail(), "rol", u.getAutoridad()));
+        return ResponseEntity.ok(Map.of(
+                "email", u.getEmail(),
+                "rol",   u.getAutoridad(),
+                "nombre", u.getNombre(),
+                "apellido", u.getApellido()
+        ));
     }
 
 }
