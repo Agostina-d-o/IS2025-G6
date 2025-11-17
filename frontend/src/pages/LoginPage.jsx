@@ -1,12 +1,13 @@
 import React from "react";
 import LoginForm from "../components/LoginForm";
-import { useNavigate, Link } from "react-router-dom"; // <-- Agregamos Link
+import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginPage({ setUsuario }) {
   const navigate = useNavigate();
 
+
   const handleLogin = (usuario) => {
-    setUsuario(usuario); // { email, rol }
+    setUsuario(usuario);
     if (usuario.rol === "enfermera") navigate("/pendientes");
     else if (usuario.rol === "medico") navigate("/atencion");
     else navigate("/");

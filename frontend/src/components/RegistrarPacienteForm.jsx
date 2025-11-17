@@ -1,50 +1,66 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { crearPaciente } from "../api/pacientes";
 
-
 export default function RegistrarPacienteForm() {
-const [form, setForm] = useState({
-cuil: "",
-nombre: "",
-apellido: "",
-calle: "",
-numero: "",
-localidad: "San Miguel de Tucumán",
-codigoObraSocial: "",
-numeroAfiliado: "",
-});
-const [mensaje, setMensaje] = useState(null);
+  const [form, setForm] = useState({
+    cuil: "",
+    nombre: "",
+    apellido: "",
+    calle: "",
+    numero: "",
+    localidad: "San Miguel de Tucumán",
+    codigoObraSocial: "",
+    numeroAfiliado: "",
+  });
+  const [mensaje, setMensaje] = useState(null);
+  const [enviando, setEnviando] = useState(false);
+  const navigate = useNavigate();
 
+  const actualizar = (campo, valor) =>
+    setForm((f) => ({ ...f, [campo]: valor }));
 
-const actualizar = (campo, valor) => setForm((f) => ({ ...f, [campo]: valor }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMensaje(null);
+    setEnviando(true);
 
+    try {
+      // si tu API espera número como integer:
+      const payload = {
+        ...form,
+        numero: form.numero ? Number(form.numero) : null,
+      };
 
-const handleSubmit = async (e) => {
-e.preventDefault();
-setMensaje(null);
-try {
-await crearPaciente(form);
-setMensaje("Paciente registrado con éxito");
-} catch (err) {
-setMensaje("Error: " + err.message);
-}
-};
+      await crearPaciente(payload);
+      setMensaje("✅ Paciente registrado con éxito. Redirigiendo…");
+      setTimeout(() => navigate("/pendientes"), 1000);   // 👈 redirección
+    } catch (err) {
+      setMensaje("❌ Error: " + (err.message || "No se pudo registrar"));
+    } finally {
+      setEnviando(false);
+    }
+  };
 
+  return (
+    <form onSubmit={handleSubmit} className="paciente-form">
+      <h3>Nuevo Paciente</h3>
 
-return (
-<form onSubmit={handleSubmit} className="paciente-form">
-<h3>Nuevo Paciente</h3>
-{Object.entries(form).map(([k, v]) => (
-<label key={k}>
-{k}:
-<input
-value={v}
-onChange={(e) => actualizar(k, e.target.value)}
-/>
-</label>
-))}
-<button type="submit">Registrar</button>
-{mensaje && <p>{mensaje}</p>}
-</form>
-);
+      {Object.entries(form).map(([k, v]) => (
+        <label key={k} style={{ textTransform: "capitalize" }}>
+          {k}:
+          <input
+            value={v}
+            onChange={(e) => actualizar(k, e.target.value)}
+          />
+        </label>
+      ))}
+
+      <button type="submit" disabled={enviando}>
+        {enviando ? "Guardando…" : "Registrar"}
+      </button>
+
+      {mensaje && <p>{mensaje}</p>}
+    </form>
+  );
 }

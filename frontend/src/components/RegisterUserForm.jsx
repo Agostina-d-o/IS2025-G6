@@ -6,6 +6,8 @@ export default function RegisterUserForm() {
   const [email, setEmail] = useState("");
   const [contrasenia, setContrasenia] = useState("");
   const [rol, setRol] = useState("ENFERMERA");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
   const [error, setError] = useState(null);
   const [cargando, setCargando] = useState(false);
 
@@ -14,14 +16,25 @@ export default function RegisterUserForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    // Validaciones simples
+    if (!nombre.trim() || !apellido.trim()) {
+      setError("Nombre y apellido son obligatorios");
+      return;
+    }
+    // Si querés exigir específicamente .com:
+    if (!email.includes("@") || !email.endsWith(".com")) {
+      setError("Ingresá un email válido que termine en .com");
+      return;
+    }
+    if (contrasenia.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres");
+      return;
+    }
+
     setCargando(true);
     try {
-          if (contrasenia.length < 8) {
-            setError("La contraseña debe tener al menos 8 caracteres");
-            setCargando(false);
-            return;
-          }
-      await register(email, contrasenia, rol);
+      await register(email, contrasenia, rol, nombre.trim(), apellido.trim());
       alert("Usuario registrado correctamente. Ahora podés iniciar sesión.");
       navigate("/"); // ir al login
     } catch (err) {
@@ -34,6 +47,24 @@ export default function RegisterUserForm() {
   return (
     <form onSubmit={handleSubmit} className="formulario">
       <h2>Registrarse</h2>
+
+      <label>
+        Nombre:
+        <input
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+      </label>
+
+      <label>
+        Apellido:
+        <input
+          value={apellido}
+          onChange={(e) => setApellido(e.target.value)}
+          required
+        />
+      </label>
 
       <label>
         Email:

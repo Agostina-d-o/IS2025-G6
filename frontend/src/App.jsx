@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage";
@@ -11,44 +11,65 @@ import AtencionMedicaPage from "./pages/AtencionMedicaPage";
 import Navbar from "./components/Navbar";
 
 export default function App() {
-  const [usuario, setUsuario] = useState(null); // { email, rol }
+  const [usuario, setUsuario] = useState(() => {
+      try { return JSON.parse(localStorage.getItem("usuario")) || null; }
+      catch { return null; }
+    });
+
+  useEffect(() => {
+    try {
+      if (usuario) localStorage.setItem("usuario", JSON.stringify(usuario));
+      else localStorage.removeItem("usuario");
+    } catch {}
+  }, [usuario]);
 
   const handleLogout = () => setUsuario(null);
 
+
+  const rol = usuario?.rol?.toLowerCase();
+
   return (
     <Router>
-      {usuario && <Navbar rol={usuario.rol} onLogout={handleLogout} />}
+      {usuario && <Navbar usuario={usuario} onLogout={handleLogout} />}
+
       <Routes>
+        {/* Home */}
         <Route
           path="/"
           element={
             usuario ? (
-              <Navigate to={usuario.rol === "medico" ? "/atencion" : "/pendientes"} />
+              <Navigate to="/pendientes" />
             ) : (
               <LoginPage setUsuario={setUsuario} />
             )
           }
         />
+
+        {/* Registrar paciente – SOLO enfermera */}
         <Route
           path="/registrar-paciente"
           element={
-            usuario?.rol === "enfermera" ? (
-              <RegistrarPacientePage emailActor={usuario.email} />
+            rol === "enfermera" ? (
+              <RegistrarPacientePage />
             ) : (
               <Navigate to="/" />
             )
           }
         />
+
+        {/* Registrar urgencia – SOLO enfermera */}
         <Route
           path="/registrar-urgencia"
           element={
-            usuario?.rol === "enfermera" ? (
-              <RegistrarUrgenciaPage emailActor={usuario.email} />
+            rol === "enfermera" ? (
+              <RegistrarUrgenciaPage usuario={usuario} />
             ) : (
               <Navigate to="/" />
             )
           }
         />
+
+        {/* Ver pendientes – enfermera y médico */}
         <Route
           path="/pendientes"
           element={
@@ -59,17 +80,24 @@ export default function App() {
             )
           }
         />
+
+        {/* Atención médica – SOLO médico */}
         <Route
           path="/atencion"
           element={
-            usuario?.rol === "medico" ? (
-              <AtencionMedicaPage />
+            rol === "medico" ? (
+              <AtencionMedicaPage usuario={usuario} />
             ) : (
               <Navigate to="/" />
             )
           }
         />
-        <Route path="/register" element={<RegisterUserPage setUsuario={setUsuario} />} />
+
+        {/* registro de usuarios */}
+        <Route
+          path="/register"
+          element={<RegisterUserPage setUsuario={setUsuario} />}
+        />
       </Routes>
     </Router>
   );

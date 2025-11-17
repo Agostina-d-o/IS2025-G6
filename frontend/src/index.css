@@ -73,5 +73,151 @@ h2 {
   color: crimson;
   text-align: center;
   margin-top: -0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 5rem;
+}
+
+.cta-group { display:flex; gap:12px; flex-wrap:wrap; }
+
+.btn{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:600; display:inline-block; }
+.btn-primary{ background:#2563eb; color:#fff; }
+.btn-secondary{ background:#10b981; color:#fff; }
+
+/* NAVBAR */
+.navbar{
+  position: sticky; top:0; z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:10px 16px;
+  background:#fff;
+  border-bottom:1px solid #eee;
+  width:100%;
+}
+
+.navbar .brand{ display:flex; flex-direction:column; min-width:0; }
+.navbar .subtitle{ font-size:.85rem; opacity:.75; margin-top:2px; }
+
+.navbar .right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.navbar .logout{
+  font-size:.82rem; padding:6px 10px; border-radius:8px;
+  background:#f8fafc; border:1px solid #e5e7eb; color:#111827;
+}
+.navbar .logout:hover{ background:#eef2f7; }
+
+/* ======= TÍTULOS DE SECCIÓN ======= */
+.section-title{
+  margin: 10px 0 14px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color:#0f172a;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title::before{
+  content:"";
+  width:8px; height:22px; border-radius:6px;
+  background: linear-gradient(180deg,#2563eb,#10b981);
+}
+
+
+.card{
+  position:relative;
+  overflow:hidden;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.06);
+  transition:transform .15s ease, box-shadow .2s ease;
+}
+.card:hover{ transform: translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
+
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin:-16px -18px 12px; padding:14px 18px;
+  background: #f8fafc;
+  border-bottom:1px solid #eef2f7;
+}
+.card-head h4{ margin:0; font-weight:800; color:#0f172a; }
+
+.card .status-chip{
+  font-size:.78rem; font-weight:700; padding:4px 10px; border-radius:999px;
+  background:#eef2f7; color:#0f172a;
+}
+
+
+.card.nivel-CRITICA        { border-left:6px solid #ef4444; }
+.card.nivel-EMERGENCIA     { border-left:6px solid #f97316; }
+.card.nivel-URGENCIA       { border-left:6px solid #eab308; }
+.card.nivel-URGENCIA_MENOR { border-left:6px solid #22c55e; }
+.card.nivel-SIN_URGENCIA   { border-left:6px solid #3b82f6; }
+
+
+.rows{ display:flex; flex-direction:column; gap:6px; margin:6px 0 8px; }
+.row{ display:flex; justify-content:space-between; gap:12px; }
+.k{ color:#64748b; display:flex; align-items:center; gap:8px; }
+.k .ico{ width:18px; text-align:center; }
+.v{ color:#0f172a; font-weight:600; }
+.status{ padding:2px 8px; border-radius:8px; background:#f3f4f6; font-weight:700; }
+
+.kv{ display:grid; grid-template-columns: 1fr 1fr; gap:6px 14px; margin-top:10px; }
+.actions{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+
+/* === GRID de cards: más chicas y centradas === */
+.cards{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 360px)); /* antes: auto-fill/minmax(320px,1fr) */
+  gap:16px;
+  justify-content:center;  /* centra las columnas cuando sobra espacio */
+}
+
+/* === CARD: menos padding, no invade contenido === */
+.card{
+  position:relative;
+  overflow:hidden;
+  border-radius:14px;
+  border:1px solid #e5e7eb;
+  background:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.06);
+  transition:transform .15s ease, box-shadow .2s ease;
+  padding:14px 16px;              /* antes 16px 18px */
+  max-width: 360px;               /* asegura tamaño compacto */
+}
+.card:hover{ transform: translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
+
+/* === Encabezado: sin márgenes negativos (no tapa nada) === */
+.card-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin:0 0 8px;                 /* antes: -16px -18px 12px */
+  padding:0 0 8px;                /* antes: 14px 18px */
+  background:transparent;         /* antes: #f8fafc */
+  border-bottom:1px solid #eef2f7;
+}
+.card-head h4{ margin:0; font-weight:800; color:#0f172a; }
+
+/* === Borde por nivel más fino === */
+.card.nivel-CRITICA        { border-left:4px solid #ef4444; }
+.card.nivel-EMERGENCIA     { border-left:4px solid #f97316; }
+.card.nivel-URGENCIA       { border-left:4px solid #eab308; }
+.card.nivel-URGENCIA_MENOR { border-left:4px solid #22c55e; }
+.card.nivel-SIN_URGENCIA   { border-left:4px solid #3b82f6; }
+
+/* Detalles: un poco más compactos */
+.rows{ gap:4px; }
+.kv{ gap:6px 10px; margin-top:8px; }
+.actions{ margin-top:10px; }
+
+/* Evitar que el texto se corte con el borde curvo */
+.card * { word-wrap: break-word; overflow-wrap: anywhere; }
+
+* { box-sizing: border-box; }
+html, body {
+  width: 100%;
+  overflow-x: hidden;
 }

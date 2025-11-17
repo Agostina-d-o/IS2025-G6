@@ -16,11 +16,17 @@ export async function login(email, contrasenia) {
   return await res.json(); // { email, rol }
 }
 
-export async function register(email, contrasenia, rol) {
+export async function register(email, contrasenia, rol, nombre, apellido) {
   const res = await fetch(`${API}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, contrasenia, rol }),
+    body: JSON.stringify({
+      email,
+      contrasenia,
+      rol,
+      nombre,
+      apellido,
+    }),
   });
 
   if (!res.ok) {

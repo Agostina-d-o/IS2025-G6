@@ -1,11 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import RegistrarPacienteForm from "../components/RegistrarPacienteForm";
 
 export default function RegistrarPacientePage() {
+  const navigate = useNavigate();
+
   return (
-    <div>
-      <h2>Registrar Paciente</h2>
-      <RegistrarPacienteForm />
-    </div>
+    <RegistrarPacienteForm
+      onOk={() => {
+        alert("✅ Paciente registrado correctamente.");
+        navigate("/pendientes");
+      }}
+    />
   );
 }

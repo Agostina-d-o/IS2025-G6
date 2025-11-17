@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getPendientes, atenderIngreso } from "../api/ingresos";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
-export default function AtencionMedicaPage() {
+export default function AtencionMedicaPage({ usuario }) {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [ingreso, setIngreso] = useState(null);
@@ -21,7 +21,11 @@ export default function AtencionMedicaPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await atenderIngreso(id, diagnostico);
+      await atenderIngreso({
+        idIngreso: Number(id),
+        diagnostico,
+        emailMedico: usuario.email,
+      });
       navigate("/pendientes");
     } catch (err) {
       setError(err.message);
@@ -33,8 +37,13 @@ export default function AtencionMedicaPage() {
   return (
     <div className="formulario">
       <h2>Atención Médica</h2>
-      <p><strong>Paciente:</strong> {ingreso.paciente.nombre} {ingreso.paciente.apellido}</p>
-      <p><strong>Nivel:</strong> {ingreso.nivelEmergencia.nombre}</p>
+      <p>
+        <strong>Paciente:</strong> {ingreso.paciente.nombre}{" "}
+        {ingreso.paciente.apellido}
+      </p>
+      <p>
+        <strong>Nivel:</strong> {ingreso.nivelEmergencia.nombre}
+      </p>
 
       <form onSubmit={handleSubmit}>
         <label>
