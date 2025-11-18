@@ -20,15 +20,18 @@ export default function PacientesRegistradosPage() {
   }, []);
 
   if (loading) return <p>Cargando…</p>;
-  if (err) return <p style={{color:"crimson"}}>Error: {err}</p>;
+  if (err) return <p style={{ color: "crimson" }}>Error: {err}</p>;
   if (!data.length) return <p>No hay pacientes registrados.</p>;
 
   return (
-    <div>
+    <div className="pacientes-page">
       <h2>Pacientes registrados</h2>
       <table className="tabla">
         <thead>
-          <tr><th>CUIL</th><th>Nombre</th></tr>
+          <tr>
+            <th>CUIL</th>
+            <th>Nombre</th>
+          </tr>
         </thead>
         <tbody>
           {data.map((p) => (

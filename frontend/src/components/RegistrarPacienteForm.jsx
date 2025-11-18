@@ -2,6 +2,17 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { crearPaciente } from "../api/pacientes";
 
+const LABELS = {
+  cuil: "CUIL",
+  nombre: "Nombre",
+  apellido: "Apellido",
+  calle: "Calle",
+  numero: "Número",
+  localidad: "Localidad",
+  codigoObraSocial: "Código Obra Social",
+  numeroAfiliado: "Número Afiliado",
+};
+
 export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
   const [form, setForm] = useState({
     cuil: cuilPrefill,
@@ -26,7 +37,6 @@ export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
     setEnviando(true);
 
     try {
-      // si tu API espera número como integer:
       const payload = {
         ...form,
         numero: form.numero ? Number(form.numero) : null,
@@ -47,8 +57,8 @@ export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
       <h3>Nuevo Paciente</h3>
 
       {Object.entries(form).map(([k, v]) => (
-        <label key={k} style={{ textTransform: "capitalize" }}>
-          {k}:
+        <label key={k}>
+          {LABELS[k] || k}:
           <input
             value={v}
             onChange={(e) => actualizar(k, e.target.value)}
