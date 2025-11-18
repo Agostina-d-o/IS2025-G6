@@ -80,6 +80,18 @@ public class ServicioUrgencias {
                     return nuevo;
                 });
 
+        //  evitar duplicado si ya hay ingreso pendiente o en proceso
+        boolean yaTieneIngresoActivo = colaAtencion.verComoLista().stream()
+                .anyMatch(i -> i.getPaciente().getCuil().equals(cuilPaciente)
+                        && i.getEstado() == EstadoIngreso.PENDIENTE);
+
+        yaTieneIngresoActivo = yaTieneIngresoActivo || enProceso.stream()
+                .anyMatch(i -> i.getPaciente().getCuil().equals(cuilPaciente));
+
+        if (yaTieneIngresoActivo) {
+            throw new IllegalStateException("Ya existe un ingreso pendiente o en proceso para este paciente.");
+        }
+
         Ingreso ingreso = new Ingreso(
                 paciente,
                 enfermera,

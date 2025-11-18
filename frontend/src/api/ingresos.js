@@ -9,12 +9,19 @@ export async function registrarIngreso(ingreso) {
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Error al registrar ingreso");
+    const body = await res.text();
+
+    try {
+      const err = JSON.parse(body);
+      throw new Error(err.message || "Error al registrar ingreso");
+    } catch (e) {
+      throw new Error(body || "Error al registrar ingreso");
+    }
   }
 
   return await res.text();
 }
+
 
 export async function getPendientes() {
   const res = await fetch(`${API}/urgencias/pendientes`);
@@ -57,8 +64,9 @@ export async function getEnProceso() {
 }
 
 export async function getFinalizados() {
-  const r = await fetch(`${API}/urgencias/finalizados`);
+  const res = await fetch(`${API}/urgencias/finalizados`);
   if (res.status === 404) return [];
-  if (!r.ok) throw new Error("Error al obtener finalizados");
-  return r.json();
+  if (!res.ok) throw new Error("Error al obtener finalizados");
+  return await res.json();
 }
+

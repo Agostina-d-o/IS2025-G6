@@ -1,29 +1,41 @@
-//registrar pacientes
-const API = "http://localhost:8080/api";
 
-export async function crearPaciente(paciente) {
-  const res = await fetch(`${API}/pacientes`, {
+const API = (import.meta?.env?.VITE_API_BASE) ?? "http://localhost:8080/api";
+
+export async function crearPaciente(dto) {
+  const resp = await fetch(`${API}/pacientes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(paciente),
+    body: JSON.stringify(dto),
   });
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Error al registrar paciente");
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`POST /pacientes ${resp.status}: ${text}`);
   }
 
-  return await res.text();
+  const text = await resp.text();
+  return text;
 }
 
+
 export async function getPacientesRegistrados() {
-  const r = await fetch(`${API}/pacientes`);
-  if (!r.ok) throw new Error("No se pudieron obtener los pacientes");
-  return await r.json();
+  const resp = await fetch(`${API}/pacientes`);
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`GET /pacientes ${resp.status}: ${text}`);
+  }
+  return resp.json();
 }
 
 export async function getPacienteByCuil(cuil) {
-  const r = await fetch(`${API}/pacientes/${encodeURIComponent(cuil)}`);
-  if (r.status === 404) return null;
-  if (!r.ok) throw new Error("No se pudo buscar el paciente");
-  return await r.json();
+  const resp = await fetch(`${API}/pacientes/${cuil}`);
+
+  if (resp.status === 404) return null;
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`Error ${resp.status}: ${text}`);
+  }
+
+  return resp.json();
+}

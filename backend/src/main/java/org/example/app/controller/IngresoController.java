@@ -5,9 +5,11 @@ import org.example.app.controller.dto.IngresoDTO;
 import org.example.app.controller.dto.IngresoFinalizadoDTO;
 import org.example.app.controller.dto.IngresoPendienteDTO;
 import org.example.domain.Ingreso;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/urgencias")
@@ -54,6 +56,14 @@ public class IngresoController {
     public List<IngresoFinalizadoDTO> obtenerFinalizados() {
         List<Ingreso> lista = servicioUrgencias.obtenerIngresosFinalizados();
         return lista.stream().map(IngresoFinalizadoDTO::from).toList();
+    }
+
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, String>> handleIngresoDuplicado(IllegalStateException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of("message", ex.getMessage()));
     }
 }
 

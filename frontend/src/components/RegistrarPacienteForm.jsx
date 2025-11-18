@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { crearPaciente } from "../api/pacientes";
 
-export default function RegistrarPacienteForm() {
+export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
   const [form, setForm] = useState({
     cuil: cuilPrefill,
     nombre: "",
@@ -34,7 +34,7 @@ export default function RegistrarPacienteForm() {
 
       await crearPaciente(payload);
       setMensaje("✅ Paciente registrado con éxito. Redirigiendo…");
-      setTimeout(() => navigate("/pendientes"), 1000);   // 👈 redirección
+      setTimeout(() => navigate("/pendientes"), 2000);
     } catch (err) {
       setMensaje("❌ Error: " + (err.message || "No se pudo registrar"));
     } finally {
@@ -56,11 +56,12 @@ export default function RegistrarPacienteForm() {
         </label>
       ))}
 
-      <button type="submit" disabled={enviando}>
-        {enviando ? "Guardando…" : "Registrar"}
-      </button>
-
-      {mensaje && <p>{mensaje}</p>}
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <button type="submit" disabled={enviando}>
+              {enviando ? "Guardando…" : "Registrar"}
+            </button>
+         {mensaje && <p style={{ margin: 0 }}>{mensaje}</p>}
+      </div>
     </form>
   );
 }

@@ -58,11 +58,10 @@ export default function PendientesPage({ usuario }) {
           <Link to="/registrar-paciente" className="btn btn-secondary">
             Registrar paciente
           </Link>
-          <Link to="/registrar-urgencia" className="btn btn-primary">
+          <Link to="/registrar-urgencia" className="btn btn-primary" style={{ background: "#EF476F", color: "#fff" }}>
             Registrar urgencia
           </Link>
-          <Link to="/pacientes" className="btn"
-                                  style={{ background: "#EF476F", color: "#fff" }}>Lista de pacientes</Link>
+          <Link to="/pacientes" className="btn btn-primary">Lista de pacientes</Link>
         </div>
       )}
 

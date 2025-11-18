@@ -14,9 +14,7 @@ export default function RegisterUserPage({ setUsuario }) {
   return (
     <div className="register-page">
       <RegisterUserForm onRegister={handleRegister} />
-      <p style={{ marginTop: "1rem", textAlign: "center" }}>
-        ¿Ya tenés cuenta? <Link to="/">Iniciar sesión</Link>
-      </p>
+
     </div>
   );
 }

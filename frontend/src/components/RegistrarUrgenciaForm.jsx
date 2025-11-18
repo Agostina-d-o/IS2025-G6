@@ -21,45 +21,53 @@ export default function RegistrarUrgenciaForm({
 
   const [mensaje, setMensaje] = useState(null);
   const [enviando, setEnviando] = useState(false);
-  const navigate = useNavigate();
+  const [pacienteEncontrado, setPacienteEncontrado] = useState(null);
   const [lookup, setLookup] = useState({ status: "idle", name: "", error: "" });
 
-
-  //const enfNombre = (nombreEnfermera ?? usuario?.nombre ?? "").trim();
-  //const enfApellido = (apellidoEnfermera ?? usuario?.apellido ?? "").trim();
+  const navigate = useNavigate();
 
   const enfNombre =
     usuario?.nombre ||
-    (usuario?.email ? usuario.email.split("@")[0] : "") || // fallback rápido
+    (usuario?.email ? usuario.email.split("@")[0] : "") ||
     "Enfermera";
-
-  const enfApellido =
-    usuario?.apellido || "";
+  const enfApellido = usuario?.apellido || "";
 
   const actualizar = (campo, valor) =>
     setForm((f) => ({ ...f, [campo]: valor }));
 
-   const buscarPaciente = async () => {
-       const cuil = form.cuilPaciente.trim();
-       if (!cuil) return setLookup({ status: "idle", name: "", error: "" });
+  const buscarPaciente = async () => {
+    const cuil = form.cuilPaciente.trim();
+    if (!cuil) return setLookup({ status: "idle", name: "", error: "" });
 
-       setLookup({ status: "loading", name: "", error: "" });
-       try {
-         const p = await getPacienteByCuil(cuil);
-         if (p) setLookup({ status: "ok", name: p.nombreCompleto, error: "" });
-         else   setLookup({ status: "notfound", name: "", error: "" });
-       } catch (e) {
-         setLookup({ status: "error", name: "", error: e.message || "Error de búsqueda" });
-       }
-     };
+    setLookup({ status: "loading", name: "", error: "" });
+    try {
+      const paciente = await getPacienteByCuil(cuil);
 
-   const irARegistrarPaciente = () => {
+      if (!paciente) {
+        setPacienteEncontrado(null);
+        setLookup({ status: "notfound", name: "", error: "" });
+        setMensaje("⚠️ Paciente no existe.");
+        return;
+      }
 
-       navigate(`/registrar-paciente?cuil=${encodeURIComponent(form.cuilPaciente.trim())}`);
-     };
+      setPacienteEncontrado(paciente);
+      setLookup({ status: "ok", name: paciente.nombreCompleto, error: "" });
+      setMensaje(null);
+    } catch (e) {
+      setLookup({
+        status: "error",
+        name: "",
+        error: e.message || "Error de búsqueda",
+      });
+    }
+  };
+
+  const irARegistrarPaciente = () => {
+    navigate(`/registrar-paciente?cuil=${encodeURIComponent(form.cuilPaciente.trim())}`);
+  };
 
   const validar = () => {
-    const t  = form.temperatura ? Number(form.temperatura) : null;
+    const t = form.temperatura ? Number(form.temperatura) : null;
     const fc = form.frecuenciaCardiaca ? Number(form.frecuenciaCardiaca) : null;
     const fr = form.frecuenciaRespiratoria ? Number(form.frecuenciaRespiratoria) : null;
     const ps = form.presionSistolica ? Number(form.presionSistolica) : null;
@@ -80,7 +88,6 @@ export default function RegistrarUrgenciaForm({
       return "Presión diastólica fuera de rango (30–140 mmHg)";
     if (ps != null && pd != null && ps <= pd)
       return "La presión sistólica debe ser mayor que la diastólica";
-
 
     const valoresValidos = ["CRITICA", "EMERGENCIA", "URGENCIA", "URGENCIA_MENOR", "SIN_URGENCIA"];
     if (!valoresValidos.includes(form.nivelEmergencia))
@@ -110,21 +117,30 @@ export default function RegistrarUrgenciaForm({
         frecuenciaRespiratoria: form.frecuenciaRespiratoria ? Number(form.frecuenciaRespiratoria) : null,
         presionSistolica: form.presionSistolica ? Number(form.presionSistolica) : null,
         presionDiastolica: form.presionDiastolica ? Number(form.presionDiastolica) : null,
-
-
         nombreEnfermera: enfNombre,
         apellidoEnfermera: enfApellido,
       };
 
       await registrarIngreso(payload);
       setMensaje("✅ Ingreso registrado correctamente. Redirigiendo…");
-      setTimeout(() => navigate("/pendientes"), 900);
+      setTimeout(() => navigate("/pendientes"), 2000);
     } catch (err) {
-      setMensaje("❌ Error: " + (err.message || "No se pudo registrar la urgencia"));
-    } finally {
+        const msg = err.message || "";
+
+        if (msg.includes("ingreso") && msg.includes("paciente")) {
+
+          setMensaje("⚠️ Este paciente ya tiene una urgencia en curso.");
+        } else {
+
+          setMensaje("❌ " + msg);
+        }
+      }
+     finally {
       setEnviando(false);
     }
   };
+
+  const deshabilitado = lookup.status !== "ok";
 
   return (
     <form onSubmit={handleSubmit} className="urgencia-form">
@@ -133,38 +149,49 @@ export default function RegistrarUrgenciaForm({
       <label>
         CUIL Paciente:
         <div style={{ display: "flex", gap: 8 }}>
-        <input
-          value={form.cuilPaciente}
-          onChange={(e) => actualizar("cuilPaciente", e.target.value)}
-          placeholder="20XXXXXXXXX"
-          required
-          style={{ flex: 1 }}
-        />
-        <button type="button" onClick={buscarPaciente}>
+          <input
+            value={form.cuilPaciente}
+            onChange={(e) => actualizar("cuilPaciente", e.target.value)}
+            placeholder="20XXXXXXXXX"
+            required
+            style={{ flex: 1 }}
+          />
+          <button type="button" onClick={buscarPaciente}>
             {lookup.status === "loading" ? "Buscando..." : "Buscar"}
-                </button>
-            </div>
-        </label>
+          </button>
+        </div>
+      </label>
 
-
-          {lookup.status === "ok" && (
-            <p style={{ color: "#16a34a", marginTop: 6 }}>
-              ✅ Paciente encontrado: <strong>{lookup.name}</strong>
-            </p>
-          )}
-          {lookup.status === "notfound" && (
-            <p style={{ color: "#b45309", marginTop: 6 }}>
-              ⚠️ Paciente no existe.{" "}
-              <button type="button" onClick={irARegistrarPaciente} className="linklike">
-                ¿Registrarlo ahora?
-              </button>
-            </p>
-          )}
-          {lookup.status === "error" && (
-            <p style={{ color: "crimson", marginTop: 6 }}>
-              ❌ {lookup.error}
-            </p>
-          )}
+      {lookup.status === "ok" && (
+        <p style={{ color: "#16a34a", marginTop: 6 }}>
+          ✅ Paciente encontrado: <strong>{lookup.name}</strong>
+        </p>
+      )}
+      {lookup.status === "notfound" && (
+        <p style={{ color: "#b45309", marginTop: 6 }}>
+          ⚠️ Paciente no existe.{" "}
+          <button
+            type="button"
+            onClick={irARegistrarPaciente}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#2563eb",
+              textDecoration: "underline",
+              cursor: "pointer",
+              padding: 0,
+              font: "inherit"
+            }}
+          >
+            Registrarlo ahora.
+          </button>
+        </p>
+      )}
+      {lookup.status === "error" && (
+        <p style={{ color: "crimson", marginTop: 6 }}>
+          ❌ {lookup.error}
+        </p>
+      )}
 
       <label>
         Informe:
@@ -173,6 +200,7 @@ export default function RegistrarUrgenciaForm({
           onChange={(e) => actualizar("informe", e.target.value)}
           placeholder="Breve descripción del estado"
           required
+          disabled={deshabilitado}
         />
       </label>
 
@@ -181,6 +209,7 @@ export default function RegistrarUrgenciaForm({
         <select
           value={form.nivelEmergencia}
           onChange={(e) => actualizar("nivelEmergencia", e.target.value)}
+          disabled={deshabilitado}
         >
           <option value="CRITICA">Crítica</option>
           <option value="EMERGENCIA">Emergencia</option>
@@ -197,6 +226,7 @@ export default function RegistrarUrgenciaForm({
           value={form.temperatura}
           onChange={(e) => actualizar("temperatura", e.target.value)}
           placeholder="36.7"
+          disabled={deshabilitado}
         />
       </label>
 
@@ -207,6 +237,7 @@ export default function RegistrarUrgenciaForm({
           value={form.frecuenciaCardiaca}
           onChange={(e) => actualizar("frecuenciaCardiaca", e.target.value)}
           placeholder="80"
+          disabled={deshabilitado}
         />
       </label>
 
@@ -217,6 +248,7 @@ export default function RegistrarUrgenciaForm({
           value={form.frecuenciaRespiratoria}
           onChange={(e) => actualizar("frecuenciaRespiratoria", e.target.value)}
           placeholder="18"
+          disabled={deshabilitado}
         />
       </label>
 
@@ -227,6 +259,7 @@ export default function RegistrarUrgenciaForm({
           value={form.presionSistolica}
           onChange={(e) => actualizar("presionSistolica", e.target.value)}
           placeholder="120"
+          disabled={deshabilitado}
         />
       </label>
 
@@ -237,14 +270,22 @@ export default function RegistrarUrgenciaForm({
           value={form.presionDiastolica}
           onChange={(e) => actualizar("presionDiastolica", e.target.value)}
           placeholder="80"
+          disabled={deshabilitado}
         />
       </label>
 
-      <button type="submit" disabled={enviando}>
-        {enviando ? "Guardando…" : "Registrar"}
-      </button>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1rem" }}>
+        <button type="submit" disabled={deshabilitado || enviando}>
+          {enviando ? "Guardando…" : "Registrar"}
+        </button>
 
-      {mensaje && <p style={{ marginTop: ".5rem" }}>{mensaje}</p>}
+        {mensaje && (
+          <span style={{ fontSize: "0.95rem", color: mensaje.startsWith("✅") ? "green" : mensaje.startsWith("⚠️") ? "#b45309" : "crimson" }}>
+            {mensaje}
+          </span>
+        )}
+      </div>
+
     </form>
   );
 }
