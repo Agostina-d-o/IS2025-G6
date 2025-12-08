@@ -1,10 +1,10 @@
 package org.example.domain;
 
-public class Enfermera extends Persona {
+public class Doctor extends Persona {
 
     private final String matricula;
 
-    public Enfermera(String cuil,
+    public Doctor(String cuil,
                   String nombre,
                   String apellido,
                   String email,
@@ -14,11 +14,6 @@ public class Enfermera extends Persona {
             throw new IllegalArgumentException("Matrícula obligatoria");
         }
         this.matricula = matricula;
-    }
-
-    // Constructor auxiliar para tests/step definitions existentes
-    public Enfermera(String nombre, String apellido) {
-        this(null, nombre, apellido, null, "MATRICULA-DUMMY");
     }
 
     public String getMatricula() {

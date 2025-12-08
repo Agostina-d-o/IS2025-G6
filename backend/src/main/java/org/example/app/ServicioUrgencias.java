@@ -1,5 +1,6 @@
 package org.example.app;
 
+import org.example.app.controller.dto.AtencionDTO;
 import org.example.app.interfaces.RepositorioPacientes;
 import org.example.app.interfaces.ValidadorObraSocial;
 import org.example.domain.*;
@@ -156,5 +157,29 @@ public class ServicioUrgencias {
     public java.util.List<org.example.domain.Paciente> listarPacientesRegistrados() {
         return dbPacientes.listarTodos();
     }
+
+    public void registrarAtencion(long idIngreso, AtencionDTO dto) {
+        Ingreso ingreso = enProceso.stream()
+                .filter(i -> i.getId() == idIngreso)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Ingreso no encontrado o no está en proceso"));
+
+        if (ingreso.getAtencion() != null) {
+            throw new IllegalStateException("Este ingreso ya fue atendido");
+        }
+
+        Doctor doctor = new Doctor(
+                null,  // CUIL no disponible en esta versión
+                dto.nombreDoctor,
+                dto.apellidoDoctor,
+                dto.emailDoctor,
+                dto.matriculaDoctor
+        );
+
+        Atencion atencion = new Atencion(doctor, dto.informe);
+        ingreso.setAtencion(atencion);
+        ingreso.setEstado(EstadoIngreso.FINALIZADO);
+    }
+
 
 }

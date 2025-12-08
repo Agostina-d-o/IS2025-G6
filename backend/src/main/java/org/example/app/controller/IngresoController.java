@@ -1,6 +1,7 @@
 package org.example.app.controller;
 
 import org.example.app.ServicioUrgencias;
+import org.example.app.controller.dto.AtencionDTO;
 import org.example.app.controller.dto.IngresoDTO;
 import org.example.app.controller.dto.IngresoFinalizadoDTO;
 import org.example.app.controller.dto.IngresoPendienteDTO;
@@ -86,6 +87,17 @@ public class IngresoController {
 
         return ResponseEntity.ok(body);
     }
+
+    @PostMapping("/ingresos/{id}/atencion")
+    public ResponseEntity<String> registrarAtencion(@PathVariable Long id, @RequestBody AtencionDTO dto) {
+        try {
+            servicioUrgencias.registrarAtencion(id, dto);
+            return ResponseEntity.ok("Atención registrada correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
 
 
     @ExceptionHandler(IllegalStateException.class)

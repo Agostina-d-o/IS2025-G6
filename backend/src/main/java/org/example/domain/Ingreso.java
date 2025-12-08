@@ -2,7 +2,10 @@ package org.example.domain;
 
 import org.example.domain.valueobject.FrecuenciaCardiaca;
 import org.example.domain.valueobject.FrecuenciaRespiratoria;
+import org.example.domain.valueobject.Temperatura;
 import org.example.domain.valueobject.TensionArterial;
+import org.example.domain.Atencion;
+
 
 import java.time.LocalDateTime;
 
@@ -16,16 +19,19 @@ public class Ingreso implements Comparable<Ingreso>{
     String informe;
     NivelEmergencia nivelEmergencia;
     EstadoIngreso estado;
-    Float temperatura;
+    Temperatura temperatura;
     FrecuenciaCardiaca frecuenciaCardiaca;
     FrecuenciaRespiratoria frecuenciaRespiratoria;
     TensionArterial tensionArterial;
+
+    private Atencion atencion;
+
 
     public Ingreso(Paciente paciente,
                    Enfermera enfermera,
                    String informe,
                    NivelEmergencia nivelEmergencia,
-                   Float temperatura,
+                   Float temperaturaParam,
                    Float frecuenciaCardiaca,
                    Float frecuenciaRespiratoria,
                    Float frecuenciaSistolica,
@@ -47,7 +53,7 @@ public class Ingreso implements Comparable<Ingreso>{
         this.informe = informe;
         this.nivelEmergencia = nivelEmergencia;
         this.estado = EstadoIngreso.PENDIENTE;
-        this.temperatura = temperatura;
+        this.temperatura = new Temperatura(temperaturaParam);
         this.frecuenciaCardiaca = new FrecuenciaCardiaca(frecuenciaCardiaca);
         this.frecuenciaRespiratoria = new FrecuenciaRespiratoria(frecuenciaRespiratoria);
         this.tensionArterial = new TensionArterial(frecuenciaSistolica,frecuenciaDiastolica);
@@ -67,6 +73,10 @@ public class Ingreso implements Comparable<Ingreso>{
     }
 
     public EstadoIngreso getEstado() { return estado;  }
+    public void setEstado(EstadoIngreso nuevoEstado) {
+        this.estado = nuevoEstado;
+    }
+
 
     public LocalDateTime getFechaIngreso() {return fechaIngreso;  }
 
@@ -87,7 +97,7 @@ public class Ingreso implements Comparable<Ingreso>{
         this.estado = EstadoIngreso.FINALIZADO;
     }
 
-    public Float getTemperatura() {
+    public Temperatura getTemperatura() {
         return temperatura;
     }
 
@@ -105,5 +115,15 @@ public class Ingreso implements Comparable<Ingreso>{
 
     public TensionArterial getTensionArterial() {
         return tensionArterial;
+    }
+
+
+    //Atención médica asociada a este ingreso (puede ser null si todavía no lo atendieron).
+    public Atencion getAtencion() {
+        return atencion;
+    }
+
+    public void setAtencion(Atencion atencion) {
+        this.atencion = atencion;
     }
 }
