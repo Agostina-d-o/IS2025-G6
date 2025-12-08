@@ -12,6 +12,7 @@ public class PacienteDTO {
     public Integer numero;
     public String localidad;
     public String codigoObraSocial;
+    public String nombreObraSocial;
     public String numeroAfiliado;
 
 
@@ -32,6 +33,7 @@ public class PacienteDTO {
         AfiliacionObraSocial af = p.getAfiliacionObraSocial();
         if (af != null && af.getObraSocial() != null) {
             dto.codigoObraSocial = af.getObraSocial().getCodigo();
+            dto.nombreObraSocial = af.getObraSocial().getNombre();
             dto.numeroAfiliado = af.getNumeroAfiliado();
         }
 

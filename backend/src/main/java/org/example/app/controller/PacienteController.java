@@ -35,7 +35,7 @@ public class PacienteController {
             AfiliacionObraSocial afiliacion = null;
             if (dto.codigoObraSocial != null && !dto.codigoObraSocial.isBlank()) {
 
-                ObraSocial obraSocial = new ObraSocial(dto.codigoObraSocial, dto.numeroAfiliado);
+                ObraSocial obraSocial = new ObraSocial(dto.codigoObraSocial, dto.nombreObraSocial);
                 afiliacion = new AfiliacionObraSocial(obraSocial, dto.numeroAfiliado);
             }
 

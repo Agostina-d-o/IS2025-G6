@@ -83,8 +83,8 @@ export default function PendientesPage({ usuario }) {
 
       {/* FINALIZADOS */}
       <h3>Finalizados</h3>
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"1rem", justifyContent:"left" }}>
-        {finalizados.length === 0 && <p>No hay finalizados.</p>}
+      <div style={{ display:"flex", flexWrap:"wrap", gap:"1rem", justifyContent: "flex-start", marginTop: "0.25rem" }}>
+        {finalizados.length === 0 && <p style={{ margin: 0 }}>No hay finalizados.</p>}
         {finalizados.map(f => (
           <div key={f.id} style={{background:"white", padding:"1rem 1.5rem", borderRadius:10, boxShadow:"0 2px 8px rgba(0,0,0,.05)", minWidth:280}}>
             <p><strong>Nivel:</strong> {f.nivelEmergencia}</p>

@@ -17,7 +17,7 @@ public class Paciente {
                     Domicilio domicilio,
                     AfiliacionObraSocial afiliacionObraSocial) {
 
-        if (!cuilValido(cuil)) throw new IllegalArgumentException("CUIL inválido (11 dígitos)");
+        if (!cuilValido(cuil)) throw new IllegalArgumentException("CUIL inválido (debe tener 11 dígitos)");
         if (nombre == null || nombre.isBlank()) throw new IllegalArgumentException("Nombre obligatorio");
         if (apellido == null || apellido.isBlank()) throw new IllegalArgumentException("Apellido obligatorio");
         if (domicilio == null) throw new IllegalArgumentException("Domicilio obligatorio");
