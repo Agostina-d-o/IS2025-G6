@@ -120,7 +120,7 @@ a:hover {
 }
 
 body {
-  background-color: #f3f4f6; /* gris suave */
+  background-color: #f3f4f6;
 }
 
 .pacientes-page {
@@ -130,7 +130,7 @@ body {
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-  text-align: left; /* importante */
+  text-align: left;
 }
 
 .pacientes-page h2 {
@@ -138,7 +138,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Tabla bien marcada */
 .tabla {
   width: 100%;
   border-collapse: collapse;
@@ -157,7 +156,6 @@ body {
   border-bottom: 1px solid #e0e0e0;
 }
 
-/* bordes externos para que se note más tipo “tabla de Excel” */
 .tabla,
 .tabla th,
 .tabla td {
@@ -192,8 +190,8 @@ body {
 
 .paciente-form-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 columnas */
-  gap: 1rem 1.5rem; /* filas / columnas */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
 }
 
 .campo label {
@@ -212,13 +210,15 @@ body {
 }
 
 .campo.full {
-  grid-column: 1 / -1; /* ocupa las 2 columnas */
+  grid-column: 1 / -1;
 }
 
-/* Que en pantallas chicas (celu) se apile en una sola columna */
 @media (max-width: 768px) {
   .paciente-form-grid {
     grid-template-columns: 1fr;
   }
 }
+
+
+
 

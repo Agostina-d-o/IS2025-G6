@@ -20,7 +20,7 @@ export default function Navbar({ usuario, onLogout }) {
   return (
     <div className="navbar">
       <div>
-        <strong>🏥 Guardia Clínica</strong>
+        <strong>🏥 Guardia Clínica IS</strong>
         {usuario && (
           <div style={{ fontSize: ".9rem", opacity: 0.8 }}>
             {nombreVisible} ({(usuario.rol ?? "").toString().toUpperCase()})
@@ -34,7 +34,7 @@ export default function Navbar({ usuario, onLogout }) {
             <button className="btn btn-secondary">Ingresos Pendientes</button>
           </Link>
 
-          <button onClick={handleLogout} className="btn btn-primary">
+          <button onClick={handleLogout} className="btn-logout">
             Cerrar sesión
           </button>
         </div>

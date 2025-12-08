@@ -2,6 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { crearPaciente } from "../api/pacientes";
 
+const OBRAS = {
+  OSDE: "Osde Binario",
+  PAMI: "PAMI",
+  SUBSIDIO: "Subsidio de Salud",
+  SWISS: "Swiss Medical",
+};
+
+
 export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
   const [form, setForm] = useState({
     cuil: cuilPrefill,
@@ -163,7 +171,15 @@ export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
             <input
               style={inputStyle}
               value={form.codigoObraSocial}
-              onChange={(e) => actualizar("codigoObraSocial", e.target.value)}
+              onChange={(e) => {
+                const valor = e.target.value;
+                // guardar el código
+                actualizar("codigoObraSocial", valor);
+
+                // buscar nombre según el código
+                const nombre = OBRAS[valor.trim().toUpperCase()] || "";
+                actualizar("nombreObraSocial", nombre);
+              }}
             />
           </label>
         </div>

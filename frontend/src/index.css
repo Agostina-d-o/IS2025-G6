@@ -81,6 +81,7 @@ h2 {
 .btn{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:600; display:inline-block; }
 .btn-primary{ background:#2563eb; color:#fff; }
 .btn-secondary{ background:#10b981; color:#fff; }
+.btn-logout{ background:#e57373; color:#fff; }
 
 /* NAVBAR */
 .navbar{
@@ -105,12 +106,6 @@ h2 {
   gap:12px;
   flex-wrap:wrap;
 }
-
-.navbar .logout{
-  font-size:.82rem; padding:6px 10px; border-radius:8px;
-  background:#f8fafc; border:1px solid #e5e7eb; color:#111827;
-}
-.navbar .logout:hover{ background:#eef2f7; }
 
 /* ======= TÍTULOS DE SECCIÓN ======= */
 .section-title{
@@ -169,15 +164,14 @@ h2 {
 .kv{ display:grid; grid-template-columns: 1fr 1fr; gap:6px 14px; margin-top:10px; }
 .actions{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
 
-/* === GRID de cards: más chicas y centradas === */
+
 .cards{
   display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 360px)); /* antes: auto-fill/minmax(320px,1fr) */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
   gap:16px;
-  justify-content:center;  /* centra las columnas cuando sobra espacio */
+  justify-content:center;
 }
 
-/* === CARD: menos padding, no invade contenido === */
 .card{
   position:relative;
   overflow:hidden;
@@ -186,12 +180,11 @@ h2 {
   background:#fff;
   box-shadow:0 8px 18px rgba(0,0,0,.06);
   transition:transform .15s ease, box-shadow .2s ease;
-  padding:14px 16px;              /* antes 16px 18px */
-  max-width: 360px;               /* asegura tamaño compacto */
+  padding:14px 16px;
+  max-width: 360px;
 }
 .card:hover{ transform: translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
 
-/* === Encabezado: sin márgenes negativos (no tapa nada) === */
 .card-head{
   display:flex; align-items:center; justify-content:space-between; gap:10px;
   margin:0 0 8px;                 /* antes: -16px -18px 12px */
@@ -201,19 +194,17 @@ h2 {
 }
 .card-head h4{ margin:0; font-weight:800; color:#0f172a; }
 
-/* === Borde por nivel más fino === */
 .card.nivel-CRITICA        { border-left:4px solid #ef4444; }
 .card.nivel-EMERGENCIA     { border-left:4px solid #f97316; }
 .card.nivel-URGENCIA       { border-left:4px solid #eab308; }
 .card.nivel-URGENCIA_MENOR { border-left:4px solid #22c55e; }
 .card.nivel-SIN_URGENCIA   { border-left:4px solid #3b82f6; }
 
-/* Detalles: un poco más compactos */
+
 .rows{ gap:4px; }
 .kv{ gap:6px 10px; margin-top:8px; }
 .actions{ margin-top:10px; }
 
-/* Evitar que el texto se corte con el borde curvo */
 .card * { word-wrap: break-word; overflow-wrap: anywhere; }
 
 * { box-sizing: border-box; }

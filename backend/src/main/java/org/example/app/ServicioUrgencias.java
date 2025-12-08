@@ -10,23 +10,21 @@ import org.springframework.stereotype.Service;
 
 
 //import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ServicioUrgencias {
 
     private final ColaAtencion colaAtencion = new ColaAtencion();
+    private final List<Ingreso> enProceso = new ArrayList<>();
+    private final List<Ingreso> finalizados = new ArrayList<>();
     private ValidadorObraSocial validadorObraSocial;
 
     //SEGREGACION DE INTERFAZ
     //PATRON ADAPTADOR
     private RepositorioPacientes dbPacientes;
 
-
-    private final List<Ingreso> enProceso = new java.util.ArrayList<>();
-    private final List<Ingreso> finalizados = new java.util.ArrayList<>();
-
-    //private List<Ingreso> listaEspera;
 
     //INYECCION DE DEPENDENCIA -> Pruebas
     public ServicioUrgencias(RepositorioPacientes dbPacientes, ValidadorObraSocial validadorObraSocial) {
@@ -41,6 +39,11 @@ public class ServicioUrgencias {
                                       String apellido,
                                       Domicilio domicilio,
                                       AfiliacionObraSocial afiliacionOpcional) {
+        //evitar duplicados por CUIL
+        if (dbPacientes.buscarPacientePorCuil(cuil).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un paciente registrado con ese CUIL");
+        }
+
         if (afiliacionOpcional != null) {
             String codOS = afiliacionOpcional.getObraSocial().getCodigo();
             String nroAf = afiliacionOpcional.getNumeroAfiliado();
@@ -114,12 +117,39 @@ public class ServicioUrgencias {
                 .toList();
     }
 
+    public Ingreso atenderProximoPaciente() {
+        if (colaAtencion.estaVacia()) {
+            throw new IllegalStateException("No hay ingresos pendientes en la lista de espera.");
+        }
+
+        Ingreso siguiente = colaAtencion.atender();
+        siguiente.marcarEnProceso();
+        enProceso.add(siguiente);
+        return siguiente;
+    }
+
+    public Ingreso finalizarIngreso(long idIngreso, String diagnostico) {
+
+        Ingreso ingreso = enProceso.stream()
+                .filter(i -> i.getId() == idIngreso)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "No se encontró un ingreso EN_PROCESO con el id " + idIngreso));
+
+        ingreso.finalizar(diagnostico);
+
+        enProceso.remove(ingreso);
+        finalizados.add(ingreso);
+
+        return ingreso;
+    }
+
     public List<Ingreso> obtenerIngresosEnProceso() {
-        return List.copyOf(enProceso);
+        return new ArrayList<>(enProceso);
     }
 
     public List<Ingreso> obtenerIngresosFinalizados() {
-        return List.copyOf(finalizados);
+        return new ArrayList<>(finalizados);
     }
 
 

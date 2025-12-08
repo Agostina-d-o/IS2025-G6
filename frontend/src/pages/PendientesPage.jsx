@@ -32,8 +32,8 @@ export default function PendientesPage({ usuario }) {
 
   const handleAtender = async (id) => {
     try {
-      await atenderIngreso(id);
-      alert(`Ingreso #${id} está EN PROCESO`);
+      await atenderIngreso();
+      alert(`Próximo ingreso reclamado y puesto EN PROCESO`);
       await cargarTodo();
     } catch (e) { alert(e.message); }
   };
@@ -66,7 +66,39 @@ export default function PendientesPage({ usuario }) {
       )}
 
       {/* PENDIENTES */}
-      <h3>Ingresos Pendientes</h3>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
+          alignItems: "center",
+          marginTop: "1.5rem",
+          marginBottom: "0.5rem",
+        }}
+      >
+        <h3
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            borderLeft: "6px solid #FFB703",
+            paddingLeft: "0.75rem",
+          }}
+        >
+          📋 Ingresos Pendientes
+        </h3>
+        {rol === "medico" && (
+          <button
+            className="btn btn-primary"
+            onClick={handleAtender}
+            style={{ justifySelf: "center" }}
+          >
+            Atender próximo paciente
+          </button>
+        )}
+
+        <div></div>
+      </div>
+
       <PendientesList
         ingresos={pendientes}
         mostrarBotonAtender={rol === "medico"}
@@ -74,7 +106,17 @@ export default function PendientesPage({ usuario }) {
       />
 
       {/* EN PROCESO */}
-      <h3>En proceso</h3>
+      <h3
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          borderLeft: "6px solid #9C27B0",
+          paddingLeft: "0.75rem",
+        }}
+      >
+        🩺 En Proceso
+      </h3>
       <PendientesList
         ingresos={enProceso}
         mostrarBotonFinalizar={rol === "medico"}
@@ -82,14 +124,24 @@ export default function PendientesPage({ usuario }) {
       />
 
       {/* FINALIZADOS */}
-      <h3>Finalizados</h3>
+      <h3
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          borderLeft: "6px solid #2E7D32",
+          paddingLeft: "0.75rem",
+        }}
+      >
+        ✅ Finalizados
+      </h3>
       <div style={{ display:"flex", flexWrap:"wrap", gap:"1rem", justifyContent: "flex-start", marginTop: "0.25rem" }}>
         {finalizados.length === 0 && <p style={{ margin: 0 }}>No hay finalizados.</p>}
         {finalizados.map(f => (
           <div key={f.id} style={{background:"white", padding:"1rem 1.5rem", borderRadius:10, boxShadow:"0 2px 8px rgba(0,0,0,.05)", minWidth:280}}>
             <p><strong>Nivel:</strong> {f.nivelEmergencia}</p>
             <p><strong>Paciente:</strong> {f.paciente}</p>
-            <p><strong>Hora:</strong> {new Date(f.fechaIngreso).toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}</p>
+              <strong>Fecha y hora:</strong> {f.fechaIngreso}
             <p><strong>Diagnóstico:</strong> {f.diagnostico}</p>
           </div>
         ))}

@@ -61,11 +61,7 @@ export default function IngresoCard({
       <p className="meta"><strong>📅 Fecha y hora:</strong> {fechaStr}</p>
 
       <div className="actions">
-        {mostrarBotonAtender && (
-          <button className="btn btn-primary" onClick={() => onAtender?.(ingreso.id)}>
-            Atender
-          </button>
-        )}
+
         {mostrarBotonFinalizar && (
           <button className="btn btn-dark" onClick={() => onFinalizar?.(ingreso.id)}>
             Finalizar

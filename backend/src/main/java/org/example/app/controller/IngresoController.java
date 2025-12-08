@@ -8,6 +8,7 @@ import org.example.domain.Ingreso;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,9 +59,37 @@ public class IngresoController {
         return lista.stream().map(IngresoFinalizadoDTO::from).toList();
     }
 
+    @PostMapping("/atender")
+    public ResponseEntity<Map<String, Object>> atenderProximo() {
+        Ingreso ingreso = servicioUrgencias.atenderProximoPaciente();
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("id", ingreso.getId());
+        body.put("mensaje", "Ingreso puesto EN_PROCESO");
+
+        return ResponseEntity.ok(body);
+    }
+
+
+    record FinalizarIngresoRequest(long idIngreso, String diagnostico) {}
+
+    @PostMapping("/finalizar")
+    public ResponseEntity<Map<String, Object>> finalizar(@RequestBody FinalizarIngresoRequest request) {
+        Ingreso ingreso = servicioUrgencias.finalizarIngreso(
+                request.idIngreso(),
+                request.diagnostico()
+        );
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("id", ingreso.getId());
+        body.put("mensaje", "Ingreso FINALIZADO");
+
+        return ResponseEntity.ok(body);
+    }
+
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, String>> handleIngresoDuplicado(IllegalStateException ex) {
+    public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
         return ResponseEntity
                 .badRequest()
                 .body(Map.of("message", ex.getMessage()));

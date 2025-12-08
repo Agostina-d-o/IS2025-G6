@@ -30,17 +30,17 @@ export async function getPendientes() {
   return await res.json();
 }
 
-export async function atenderIngreso(idIngreso) {
+export async function atenderIngreso() {
   const res = await fetch(`${API}/urgencias/atender`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idIngreso }),
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || "Error al atender ingreso");
   }
-  return await res.json(); // IngresoPendienteDTO
+
+  return await res.json().catch(() => ({}));
 }
 
 export async function finalizarIngreso(idIngreso, diagnostico) {
