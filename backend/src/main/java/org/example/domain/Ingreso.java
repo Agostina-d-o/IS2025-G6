@@ -61,7 +61,7 @@ public class Ingreso implements Comparable<Ingreso>{
 
 
     public String getCuilPaciente(){
-        return this.paciente.getCuil();
+        return this.paciente.getCuil().getValor();
     }
 
     @Override

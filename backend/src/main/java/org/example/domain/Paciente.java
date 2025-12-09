@@ -1,6 +1,7 @@
 package org.example.domain;
 
 import org.example.domain.valueobject.AfiliacionObraSocial;
+import org.example.domain.valueobject.Cuil;
 import org.example.domain.valueobject.Domicilio;
 
 public class Paciente extends Persona {
@@ -8,25 +9,20 @@ public class Paciente extends Persona {
     private Domicilio domicilio;
     private AfiliacionObraSocial afiliacionObraSocial;
 
-    public Paciente(String cuil,
+    public Paciente(Cuil cuil,
                     String nombre,
                     String apellido,
                     Domicilio domicilio,
                     AfiliacionObraSocial afiliacionObraSocial) {
-        // Persona se queda sólo con los datos básicos
-        super(cuil, nombre, apellido, null);
 
-        if (!cuilValido(cuil)) throw new IllegalArgumentException("CUIL inválido (debe tener 11 dígitos)");
+        super(cuil, nombre, apellido, null); // el cuil ya fue validado al construir el VO
+
         if (nombre == null || nombre.isBlank()) throw new IllegalArgumentException("Nombre obligatorio");
         if (apellido == null || apellido.isBlank()) throw new IllegalArgumentException("Apellido obligatorio");
         if (domicilio == null) throw new IllegalArgumentException("Domicilio obligatorio");
 
         this.domicilio = domicilio;
         this.afiliacionObraSocial = afiliacionObraSocial; // puede ser null
-    }
-
-    private boolean cuilValido(String cuil) {
-        return cuil != null && cuil.matches("\\d{11}");
     }
 
     public Domicilio getDomicilio() { return domicilio; }

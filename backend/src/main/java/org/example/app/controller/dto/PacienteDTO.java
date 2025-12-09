@@ -19,7 +19,7 @@ public class PacienteDTO {
     public static PacienteDTO from(Paciente p) {
         PacienteDTO dto = new PacienteDTO();
         if (p == null) return dto;
-        dto.cuil = p.getCuil();
+        dto.cuil = p.getCuil().getValor();
         dto.nombre = p.getNombre();
         dto.apellido = p.getApellido();
 

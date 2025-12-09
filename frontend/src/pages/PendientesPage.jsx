@@ -67,13 +67,7 @@ export default function PendientesPage({ usuario }) {
 
       {/* PENDIENTES */}
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr auto 1fr",
-          alignItems: "center",
-          marginTop: "1.5rem",
-          marginBottom: "0.5rem",
-        }}
+
       >
         <h3
           style={{

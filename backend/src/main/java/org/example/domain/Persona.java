@@ -1,21 +1,23 @@
 package org.example.domain;
 
+import org.example.domain.valueobject.Cuil;
+
 public abstract class Persona {
 
     // Campos comunes
-    protected String cuil;
+    protected Cuil cuil;
     protected String nombre;
     protected String apellido;
     protected String email;
 
-    protected Persona(String cuil, String nombre, String apellido, String email) {
+    protected Persona(Cuil cuil, String nombre, String apellido, String email) {
         this.cuil = cuil;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
     }
 
-    public String getCuil() {
+    public Cuil getCuil() {
         return cuil;
     }
 

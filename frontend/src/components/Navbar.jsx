@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
+import "../styles/Navbar.css";
 
 export default function Navbar({ usuario, onLogout }) {
   const navigate = useNavigate();
@@ -31,10 +32,10 @@ export default function Navbar({ usuario, onLogout }) {
       {usuario && (
         <div style={{ display: "flex", gap: "16px" }}>
           <Link to="/pendientes">
-            <button className="btn btn-secondary">Ingresos Pendientes</button>
+            <button className="navbar-button boton-verde">Ingresos Pendientes</button>
           </Link>
 
-          <button onClick={handleLogout} className="btn-logout">
+          <button onClick={handleLogout} className="navbar-button boton-rojo">
             Cerrar sesión
           </button>
         </div>

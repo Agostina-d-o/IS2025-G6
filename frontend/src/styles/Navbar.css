@@ -1,0 +1,22 @@
+.navbar-button {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 140px;
+  max-width: 160px;
+  line-height: 1.2;
+  white-space: normal;
+}
+.boton-verde {
+  background-color: #1abc9c;
+  color: white;
+}
+
+.boton-rojo {
+  background-color: #e74c3c;
+  color: white;
+}

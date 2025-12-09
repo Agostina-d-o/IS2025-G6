@@ -1,0 +1,88 @@
+.formulario {
+  width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.formulario h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.formulario label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  margin-top: 1rem;
+}
+
+.formulario input,
+.formulario select {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.nombre-apellido {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nombre-apellido div {
+  flex: 1;
+}
+
+.rol-matricula {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.rol-matricula div {
+  flex: 1;
+}
+
+.formulario button[type="submit"] {
+  width: 100%;
+  background-color: #2b7cff;
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 0.3rem;
+}
+
+.formulario button[type="submit"]:hover {
+  background-color: #205dcf;
+}
+
+.error {
+  color: crimson;
+  margin-top: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.login-register-link {
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 2.5rem;
+}
+
+.login-register-link a {
+  color: #2b7cff;
+  text-decoration: none;
+  font-weight: bold;
+}

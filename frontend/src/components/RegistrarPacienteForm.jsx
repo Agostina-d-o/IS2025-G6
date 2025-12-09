@@ -213,13 +213,43 @@ export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
           alignItems: "center",
           gap: "1rem",
           marginTop: "1rem",
+          flexWrap: "wrap"
         }}
       >
-        <button type="submit" disabled={enviando}>
+        <button
+          type="submit"
+          disabled={enviando}
+          style={{
+            padding: "0.6rem 1.5rem",
+            fontWeight: "bold",
+            backgroundColor: "#2b7cff",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
           {enviando ? "Guardando…" : "Registrar"}
         </button>
-        {mensaje && <p style={{ margin: 0 }}>{mensaje}</p>}
+
+        {mensaje && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: "0.95rem",
+              color: mensaje.startsWith("✅")
+                ? "green"
+                : mensaje.startsWith("❌")
+                ? "crimson"
+                : "#b45309",
+            }}
+          >
+            {mensaje}
+          </p>
+        )}
       </div>
+
     </form>
   );
 }

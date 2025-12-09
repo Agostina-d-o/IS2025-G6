@@ -4,6 +4,7 @@ import org.example.app.ServicioUrgencias;
 import org.example.app.controller.dto.PacienteDTO;
 import org.example.app.controller.dto.PacienteSimpleDTO;
 import org.example.domain.valueobject.AfiliacionObraSocial;
+import org.example.domain.valueobject.Cuil;
 import org.example.domain.valueobject.Domicilio;
 import org.example.domain.valueobject.ObraSocial;
 import org.springframework.http.HttpStatus;
@@ -65,12 +66,18 @@ public class PacienteController {
 
     @GetMapping("/{cuil}")
     public ResponseEntity<PacienteSimpleDTO> buscarPorCuil(@PathVariable String cuil) {
-        return servicioUrgencias.listarPacientesRegistrados().stream()
-                .filter(p -> p.getCuil().equals(cuil))
-                .findFirst()
-                .map(PacienteSimpleDTO::from)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            var cuilObj = new Cuil(cuil);
+            return servicioUrgencias.listarPacientesRegistrados().stream()
+                    .filter(p -> p.getCuil().equals(cuilObj))
+                    .findFirst()
+                    .map(PacienteSimpleDTO::from)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
+
 
 }

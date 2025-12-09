@@ -27,7 +27,7 @@ public record PacienteSimpleDTO(
         }
 
         return new PacienteSimpleDTO(
-                p.getCuil(),
+                p.getCuil().getValor(),
                 nombreCompleto,
                 codOS,
                 nomOS,

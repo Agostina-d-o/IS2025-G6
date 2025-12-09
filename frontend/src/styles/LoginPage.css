@@ -1,0 +1,17 @@
+
+.registro-link {
+  margin-top: 0rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #444;
+}
+
+.registro-link a {
+  font-weight: bold;
+  color: #2b7cff;
+  text-decoration: none;
+}
+
+.registro-link a:hover {
+  text-decoration: underline;
+}

@@ -109,6 +109,26 @@ export default function RegistrarUrgenciaForm({
     return null;
   };
 
+const buscarButtonStyle = {
+  padding: "0.45rem 0.75rem",
+  fontWeight: "bold",
+  backgroundColor: "#2b7cff",
+  color: "white",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  height: "40px",
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  maxWidth: "120px",
+};
+
+
+const buscarButtonHoverStyle = {
+  backgroundColor: "#205dcf",
+};
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje(null);
@@ -160,7 +180,7 @@ export default function RegistrarUrgenciaForm({
 
   const deshabilitado = lookup.status !== "ok";
 
-  // Estilos inline
+
   const formStyle = {
     maxWidth: "900px",
     margin: "2rem auto",
@@ -216,7 +236,7 @@ export default function RegistrarUrgenciaForm({
                 placeholder="20XXXXXXXXX"
                 required
               />
-              <button type="button" onClick={buscarPaciente}>
+              <button type="button" onClick={buscarPaciente} style={buscarButtonStyle}>
                 {lookup.status === "loading" ? "Buscando..." : "Buscar"}
               </button>
             </div>
@@ -228,8 +248,18 @@ export default function RegistrarUrgenciaForm({
             </p>
           )}
           {lookup.status === "notfound" && (
-            <p style={{ color: "#b45309", marginTop: 6 }}>
-              ⚠️ Paciente no existe.{" "}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                color: "#b45309",
+                marginTop: 6,
+                flexWrap: "nowrap",
+                flexDirection: "row",
+              }}
+            >
+              <span style={{ whiteSpace: "nowrap" }}>⚠️ Paciente no existe.</span>
               <button
                 type="button"
                 onClick={irARegistrarPaciente}
@@ -241,12 +271,15 @@ export default function RegistrarUrgenciaForm({
                   cursor: "pointer",
                   padding: 0,
                   font: "inherit",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Registrarlo ahora.
               </button>
-            </p>
+            </div>
           )}
+
+
           {lookup.status === "error" && (
             <p style={{ color: "crimson", marginTop: 6 }}>
               ❌ {lookup.error}
