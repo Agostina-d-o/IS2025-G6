@@ -4,25 +4,25 @@ package org.example.domain;
 
 public class Atencion {
 
-    private final Doctor doctor;
-    private final String informe;
+    private final Medico medico;
+    private final String diagnostico;
 
-    public Atencion(Doctor doctor, String informe) {
-        if (doctor == null) {
-            throw new IllegalArgumentException("El doctor es obligatorio para registrar una atención");
+    public Atencion(Medico medico, String diagnostico) {
+        if (medico == null) {
+            throw new IllegalArgumentException("El medico es obligatorio para registrar una atención");
         }
-        if (informe == null || informe.isBlank()) {
-            throw new IllegalArgumentException("El informe/diagnóstico es obligatorio");
+        if (diagnostico == null || diagnostico.isBlank()) {
+            throw new IllegalArgumentException("El diagnóstico es obligatorio");
         }
-        this.doctor = doctor;
-        this.informe = informe;
+        this.medico = medico;
+        this.diagnostico = diagnostico;
     }
 
-    public Doctor getDoctor() {
-        return doctor;
+    public Medico getMedico() {
+        return medico;
     }
 
-    public String getInforme() {
-        return informe;
+    public String getDiagnostico() {
+        return diagnostico;
     }
 }

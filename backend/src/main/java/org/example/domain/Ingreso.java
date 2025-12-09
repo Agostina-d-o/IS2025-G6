@@ -15,6 +15,7 @@ public class Ingreso implements Comparable<Ingreso>{
     private String diagnostico;
     Paciente paciente;
     Enfermera enfermera;
+    Medico medico;
     LocalDateTime fechaIngreso;
     String informe;
     NivelEmergencia nivelEmergencia;
@@ -88,7 +89,10 @@ public class Ingreso implements Comparable<Ingreso>{
     public long getId() { return id; }
     public Paciente getPaciente() { return paciente; }
     public NivelEmergencia getNivelEmergencia() { return nivelEmergencia; }
-    public String getDiagnostico() { return diagnostico; }
+    public String getDiagnostico() {
+        return atencion != null ? atencion.getDiagnostico() : null;
+    }
+
 
     public void marcarEnProceso() { this.estado = EstadoIngreso.EN_PROCESO; }
 
@@ -117,6 +121,9 @@ public class Ingreso implements Comparable<Ingreso>{
         return tensionArterial;
     }
 
+    public Medico getMedico() {
+        return medico;
+    }
 
     //Atención médica asociada a este ingreso (puede ser null si todavía no lo atendieron).
     public Atencion getAtencion() {
@@ -124,6 +131,14 @@ public class Ingreso implements Comparable<Ingreso>{
     }
 
     public void setAtencion(Atencion atencion) {
+        if (this.atencion != null)
+            throw new IllegalStateException("Este ingreso ya fue atendido");
+
         this.atencion = atencion;
+        this.medico = atencion.getMedico();
     }
+
+
+
+
 }

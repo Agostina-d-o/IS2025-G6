@@ -2,11 +2,11 @@ package org.example.domain;
 
 import org.example.domain.valueobject.Cuil;
 
-public class Doctor extends Persona {
+public class Medico extends Persona {
 
     private final String matricula;
 
-    public Doctor(Cuil cuil,
+    public Medico(Cuil cuil,
                   String nombre,
                   String apellido,
                   String email,

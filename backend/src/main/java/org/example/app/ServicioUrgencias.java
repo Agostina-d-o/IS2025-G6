@@ -125,19 +125,26 @@ public class ServicioUrgencias {
         return siguiente;
     }
 
-    public Ingreso finalizarIngreso(long idIngreso, String diagnostico) {
+    public Ingreso finalizarIngreso(long idIngreso, String diagnostico, Medico medico) {
         Ingreso ingreso = enProceso.stream()
                 .filter(i -> i.getId() == idIngreso)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No se encontró un ingreso EN_PROCESO con el id " + idIngreso));
 
-        ingreso.finalizar(diagnostico);
+        if (ingreso.getAtencion() != null) {
+            throw new IllegalStateException("Este ingreso ya fue finalizado anteriormente.");
+        }
+
+        Atencion atencion = new Atencion(medico, diagnostico);
+        ingreso.setAtencion(atencion);
+        ingreso.setEstado(EstadoIngreso.FINALIZADO);
 
         enProceso.remove(ingreso);
         finalizados.add(ingreso);
 
         return ingreso;
     }
+
 
     public List<Ingreso> obtenerIngresosEnProceso() {
         return new ArrayList<>(enProceso);
@@ -161,16 +168,17 @@ public class ServicioUrgencias {
             throw new IllegalStateException("Este ingreso ya fue atendido");
         }
 
-        Doctor doctor = new Doctor(
+        Medico medico = new Medico(
                 null,
-                dto.nombreDoctor,
-                dto.apellidoDoctor,
-                dto.emailDoctor,
-                dto.matriculaDoctor
+                dto.nombreMedico,
+                dto.apellidoMedico,
+                dto.emailMedico,
+                dto.matriculaMedico
         );
 
-        Atencion atencion = new Atencion(doctor, dto.informe);
+        Atencion atencion = new Atencion(medico, dto.informe);
         ingreso.setAtencion(atencion);
         ingreso.setEstado(EstadoIngreso.FINALIZADO);
+
     }
 }

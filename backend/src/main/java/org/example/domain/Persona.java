@@ -32,4 +32,8 @@ public abstract class Persona {
     public String getEmail() {
         return email;
     }
+    public String getNombreCompleto() {
+        return this.nombre + " " + this.apellido;
+    }
+
 }

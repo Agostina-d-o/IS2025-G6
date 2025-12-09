@@ -6,6 +6,7 @@ import org.example.app.controller.dto.IngresoDTO;
 import org.example.app.controller.dto.IngresoFinalizadoDTO;
 import org.example.app.controller.dto.IngresoPendienteDTO;
 import org.example.domain.Ingreso;
+import org.example.domain.Medico;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,13 +73,30 @@ public class IngresoController {
     }
 
 
-    record FinalizarIngresoRequest(long idIngreso, String diagnostico) {}
+    record FinalizarIngresoRequest(
+            long idIngreso,
+            String diagnostico,
+            String nombreMedico,
+            String apellidoMedico,
+            String emailMedico,
+            String matriculaMedico
+    ) {}
+
 
     @PostMapping("/finalizar")
     public ResponseEntity<Map<String, Object>> finalizar(@RequestBody FinalizarIngresoRequest request) {
+        Medico medico = new Medico(
+                null,
+                request.nombreMedico(),
+                request.apellidoMedico(),
+                request.emailMedico(),
+                request.matriculaMedico()
+        );
+
         Ingreso ingreso = servicioUrgencias.finalizarIngreso(
                 request.idIngreso(),
-                request.diagnostico()
+                request.diagnostico(),
+                medico
         );
 
         Map<String, Object> body = new HashMap<>();
@@ -87,6 +105,7 @@ public class IngresoController {
 
         return ResponseEntity.ok(body);
     }
+
 
     @PostMapping("/ingresos/{id}/atencion")
     public ResponseEntity<String> registrarAtencion(@PathVariable Long id, @RequestBody AtencionDTO dto) {
