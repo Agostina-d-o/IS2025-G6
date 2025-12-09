@@ -43,18 +43,31 @@ export async function atenderIngreso() {
   return await res.json().catch(() => ({}));
 }
 
-export async function finalizarIngreso(idIngreso, diagnostico) {
+export async function finalizarIngreso(idIngreso, diagnostico, medico) {
+  const payload = {
+    idIngreso: String(idIngreso),
+    diagnostico,
+    nombreMedico: medico.nombreMedico,
+    apellidoMedico: medico.apellidoMedico,
+    emailMedico: medico.emailMedico,
+    matriculaMedico: medico.matriculaMedico
+  };
+console.log("Payload enviado a /finalizar:", payload);
+
   const res = await fetch(`${API}/urgencias/finalizar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ idIngreso: String(idIngreso), diagnostico }),
+    body: JSON.stringify(payload),
   });
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || "Error al finalizar ingreso");
   }
+
   return await res.json();
 }
+
 
 export async function getEnProceso() {
   const res = await fetch(`${API}/urgencias/en-proceso`);
