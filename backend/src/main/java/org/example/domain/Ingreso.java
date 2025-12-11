@@ -40,7 +40,7 @@ public class Ingreso implements Comparable<Ingreso>{
 
         // Validar textos obligatorios
         if (informe == null || informe.isBlank()) {
-            throw new IllegalArgumentException("Falta el diagnostico del ingreso");
+            throw new IllegalArgumentException("Falta el informe del ingreso");
         }
         if (nivelEmergencia == null) {
             throw new IllegalArgumentException("Falta el nivel de emergencia");

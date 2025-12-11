@@ -59,7 +59,7 @@ public class ModuloUrgenciasStepDefinitions {
             var domicilio = new org.example.domain.valueobject.Domicilio("S/D", 1, "San Miguel de Tucumán");
 
             org.example.domain.Paciente paciente =
-                    new org.example.domain.Paciente(cuil, nombre, apellido, domicilio, null);
+                    new org.example.domain.Paciente(new org.example.domain.valueobject.Cuil(cuil), nombre, apellido, domicilio, null);
 
             dbMockeada.guardarPaciente(paciente);
         }
