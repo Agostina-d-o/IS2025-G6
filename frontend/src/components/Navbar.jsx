@@ -32,10 +32,12 @@ export default function Navbar({ usuario, onLogout }) {
       {usuario && (
         <div style={{ display: "flex", gap: "16px" }}>
           <Link to="/pendientes">
-            <button className="navbar-button boton-verde">Ingresos Pendientes</button>
+            <button className="navbar-button boton-verde">Ingresos</button>
           </Link>
 
-          <button onClick={handleLogout} className="navbar-button boton-rojo">
+          <button className="navbar-button boton-rojo"
+                    onClick={() => {if (window.confirm("¿Seguro que desea cerrar sesión?"))
+                        {handleLogout();  } }}>
             Cerrar sesión
           </button>
         </div>

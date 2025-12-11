@@ -54,12 +54,29 @@ export default function RegistrarUrgenciaForm({
       setLookup({ status: "ok", name: paciente.nombreCompleto, error: "" });
       setMensaje(null);
     } catch (e) {
+      let backendMessage = e.message;
+
+      // Buscar si dentro del mensaje hay un JSON
+      try {
+        const start = backendMessage.indexOf("{");
+        const end = backendMessage.lastIndexOf("}") + 1;
+
+        if (start !== -1 && end !== -1) {
+          const jsonText = backendMessage.substring(start, end);
+          const parsed = JSON.parse(jsonText);
+          backendMessage = parsed.message; // solo el mensaje limpio
+        }
+      } catch {
+        // si falla, deja backendMessage como está
+      }
+
       setLookup({
         status: "error",
         name: "",
-        error: e.message || "Error de búsqueda",
+        error: backendMessage,
       });
     }
+
   };
 
   const irARegistrarPaciente = () => {
@@ -160,20 +177,36 @@ const buscarButtonHoverStyle = {
           : null,
         nombreEnfermera: enfNombre,
         apellidoEnfermera: enfApellido,
+        autoridad: usuario?.rol || null,
       };
 
       await registrarIngreso(payload);
       setMensaje("✅ Ingreso registrado correctamente. Redirigiendo…");
       setTimeout(() => navigate("/pendientes"), 2000);
     } catch (err) {
-      const msg = err.message || "";
+      let backendMessage = err.message || "";
 
-      if (msg.includes("ingreso") && msg.includes("paciente")) {
+      try {
+        const start = backendMessage.indexOf("{");
+        const end = backendMessage.lastIndexOf("}") + 1;
+
+        if (start !== -1 && end !== -1) {
+          const jsonText = backendMessage.substring(start, end);
+          const parsed = JSON.parse(jsonText);
+          backendMessage = parsed.message || backendMessage;
+        }
+      } catch {
+      }
+
+      if (
+        backendMessage.includes("ingreso") &&
+        backendMessage.includes("paciente")
+      ) {
         setMensaje("⚠️ Este paciente ya tiene una urgencia en curso.");
       } else {
-        setMensaje("❌ " + msg);
+        setMensaje("❌ " + backendMessage);
       }
-    } finally {
+    }finally {
       setEnviando(false);
     }
   };
@@ -254,7 +287,8 @@ const buscarButtonHoverStyle = {
                 alignItems: "center",
                 gap: "0.4rem",
                 color: "#b45309",
-                marginTop: 6,
+                marginTop: "0.1rem",
+                marginBottom: "1rem",
                 flexWrap: "nowrap",
                 flexDirection: "row",
               }}

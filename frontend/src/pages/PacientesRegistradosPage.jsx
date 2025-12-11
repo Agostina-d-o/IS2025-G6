@@ -24,7 +24,8 @@ export default function PacientesRegistradosPage() {
   if (!data.length) return <p>No hay pacientes registrados.</p>;
 
   const containerStyle = {
-    maxWidth: "900px",
+    maxWidth: "1200px",
+    width: "95%",
     margin: "2rem auto",
     padding: "1.5rem 2rem",
     backgroundColor: "#ffffff",
@@ -60,6 +61,7 @@ export default function PacientesRegistradosPage() {
           <tr style={headerRowStyle}>
             <th style={thtdStyle}>CUIL</th>
             <th style={thtdStyle}>Nombre Completo</th>
+            <th style={thtdStyle}>Domicilio Completo</th>
             <th style={thtdStyle}>Código OS</th>
             <th style={thtdStyle}>Nombre OS</th>
             <th style={thtdStyle}>Nro. Afiliado</th>
@@ -70,6 +72,7 @@ export default function PacientesRegistradosPage() {
             <tr key={p.cuil}>
               <td style={thtdStyle}>{p.cuil}</td>
               <td style={thtdStyle}>{p.nombreCompleto}</td>
+              <td style={thtdStyle}>{p.domicilioCompleto}</td>
               <td style={thtdStyle}>{p.codigoObraSocial || "—"}</td>
               <td style={thtdStyle}>{p.nombreObraSocial || "—"}</td>
               <td style={thtdStyle}>{p.numeroAfiliado || "—"}</td>

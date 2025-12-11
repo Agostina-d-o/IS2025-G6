@@ -3,17 +3,21 @@ package org.example.infra;
 import org.example.app.interfaces.ValidadorObraSocial;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Set;
 
 @Component
 public class ValidadorObraSocialDummy implements ValidadorObraSocial {
 
-    // Lista de cod de obras sociales “válidas”
     private static final Set<String> OBRAS_VALIDAS = Set.of(
-            "OSDE",
-            "PAMI",
-            "SUBSIDIO",
-            "SWISS"
+            "OSDE", "PAMI", "SUBSIDIO", "SWISS"
+    );
+
+    private static final Map<String, Set<String>> AFILIADOS_VALIDOS = Map.of(
+            "OSDE", Set.of("O100", "O101"),
+            "PAMI", Set.of("P100", "P101"),
+            "SUBSIDIO", Set.of("SS100", "SS101"),
+            "SWISS", Set.of("S100", "S101")
     );
 
     @Override
@@ -28,11 +32,15 @@ public class ValidadorObraSocialDummy implements ValidadorObraSocial {
                                 String codigoObraSocial,
                                 String numeroAfiliado) {
 
-        // que la OS exista
         if (!obraSocialExiste(codigoObraSocial)) return false;
 
-        // reglas mínimas de afiliación
-        return cuilPaciente != null && !cuilPaciente.isBlank()
-                && numeroAfiliado != null && !numeroAfiliado.isBlank();
+        if (cuilPaciente == null || cuilPaciente.isBlank()) return false;
+        if (numeroAfiliado == null || numeroAfiliado.isBlank()) return false;
+
+        Set<String> numerosValidos = AFILIADOS_VALIDOS.get(codigoObraSocial.toUpperCase());
+
+        if (numerosValidos == null) return false;
+
+        return numerosValidos.contains(numeroAfiliado.trim());
     }
 }

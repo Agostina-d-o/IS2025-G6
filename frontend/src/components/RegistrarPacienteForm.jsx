@@ -32,12 +32,65 @@ export default function RegistrarPacienteForm({ cuilPrefill = "" }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMensaje(null);
+    // VALIDACIONES OBLIGATORIAS
+    if (!form.cuil.trim()) {
+      setMensaje("❌ El CUIL es obligatorio.");
+      return;
+    }
+
+    if (!form.nombre.trim()) {
+      setMensaje("❌ El nombre es obligatorio.");
+      return;
+    }
+
+    if (!form.apellido.trim()) {
+      setMensaje("❌ El apellido es obligatorio.");
+      return;
+    }
+
+    if (!form.calle.trim()) {
+      setMensaje("❌ La calle es obligatoria.");
+      return;
+    }
+
+    if (!form.numero.trim()) {
+      setMensaje("❌ El número de domicilio es obligatorio.");
+      return;
+    }
+
+    if (isNaN(Number(form.numero))) {
+      setMensaje("❌ El número debe ser numérico.");
+      return;
+    }
+
+    if (!form.localidad.trim()) {
+      setMensaje("❌ La localidad es obligatoria.");
+      return;
+    }
+
+    // VALIDACIÓN OBRA SOCIAL OPCIONAL PERO CONSISTENTE
+    const hayOS = form.codigoObraSocial.trim() !== "";
+
+    if (hayOS) {
+      if (!form.nombreObraSocial.trim()) {
+        setMensaje("❌ El nombre de la obra social es obligatorio.");
+        return;
+      }
+      if (!form.numeroAfiliado.trim()) {
+        setMensaje("❌ El número de afiliado es obligatorio.");
+        return;
+      }
+    }
+
     setEnviando(true);
 
     try {
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+
       const payload = {
         ...form,
         numero: form.numero ? Number(form.numero) : null,
+        autoridad: usuario?.rol || null,
         ...(form.codigoObraSocial?.trim()
           ? {}
           : {

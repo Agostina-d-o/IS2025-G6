@@ -1,5 +1,6 @@
 package org.example.app.controller.dto;
 
+import org.example.domain.Autoridad;
 import org.example.domain.Paciente;
 import org.example.domain.valueobject.AfiliacionObraSocial;
 import org.example.domain.valueobject.Domicilio;
@@ -14,6 +15,7 @@ public class PacienteDTO {
     public String codigoObraSocial;
     public String nombreObraSocial;
     public String numeroAfiliado;
+    public Autoridad autoridad;
 
 
     public static PacienteDTO from(Paciente p) {

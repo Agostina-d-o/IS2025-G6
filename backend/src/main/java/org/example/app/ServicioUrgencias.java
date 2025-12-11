@@ -1,6 +1,6 @@
 package org.example.app;
 
-import org.example.app.controller.dto.AtencionDTO;
+import jakarta.annotation.PostConstruct;
 import org.example.app.interfaces.RepositorioPacientes;
 import org.example.app.interfaces.ValidadorObraSocial;
 import org.example.domain.*;
@@ -33,6 +33,13 @@ public class ServicioUrgencias {
                                       Domicilio domicilio,
                                       AfiliacionObraSocial afiliacionOpcional) {
 
+        if (nombre == null || nombre.isBlank())
+            throw new IllegalArgumentException("El nombre es obligatorio");
+
+        if (apellido == null || apellido.isBlank())
+            throw new IllegalArgumentException("El apellido es obligatorio");
+
+
         Cuil cuilVO = new Cuil(cuil);
 
         if (dbPacientes.buscarPacientePorCuil(cuilVO).isPresent()) {
@@ -43,9 +50,9 @@ public class ServicioUrgencias {
             String codOS = afiliacionOpcional.getObraSocial().getCodigo();
             String nroAf = afiliacionOpcional.getNumeroAfiliado();
             if (!validadorObraSocial.obraSocialExiste(codOS))
-                throw new IllegalArgumentException("No se puede registrar: obra social inexistente");
+                throw new IllegalArgumentException("Obra social inexistente");
             if (!validadorObraSocial.estaAfiliado(cuil, codOS, nroAf))
-                throw new IllegalArgumentException("No se puede registrar: el paciente no está afiliado a la obra social");
+                throw new IllegalArgumentException("El paciente no está afiliado a la obra social");
         }
 
         Paciente paciente = new Paciente(cuilVO, nombre, apellido, domicilio, afiliacionOpcional);
@@ -66,11 +73,10 @@ public class ServicioUrgencias {
 
         Cuil cuilVO = new Cuil(cuilPaciente);
 
-        if (enfermera == null ||
-                (enfermera.getNombre()==null || enfermera.getNombre().isBlank()) &&
-                        (enfermera.getApellido()==null || enfermera.getApellido().isBlank())) {
-            enfermera = new Enfermera("No", "asignada");
+        if (enfermera == null) {
+            throw new IllegalArgumentException("La enfermera es obligatoria para registrar una urgencia");
         }
+
 
         Paciente paciente = dbPacientes.buscarPacientePorCuil(cuilVO)
                 .orElseGet(() -> {
@@ -158,27 +164,9 @@ public class ServicioUrgencias {
         return dbPacientes.listarTodos();
     }
 
-    public void registrarAtencion(long idIngreso, AtencionDTO dto) {
-        Ingreso ingreso = enProceso.stream()
-                .filter(i -> i.getId() == idIngreso)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Ingreso no encontrado o no está en proceso"));
-
-        if (ingreso.getAtencion() != null) {
-            throw new IllegalStateException("Este ingreso ya fue atendido");
-        }
-
-        Medico medico = new Medico(
-                null,
-                dto.nombreMedico,
-                dto.apellidoMedico,
-                dto.emailMedico,
-                dto.matriculaMedico
-        );
-
-        Atencion atencion = new Atencion(medico, dto.informe);
-        ingreso.setAtencion(atencion);
-        ingreso.setEstado(EstadoIngreso.FINALIZADO);
-
+    @PostConstruct
+    public void resetearIds() {
+        Ingreso.resetSecuencia();
     }
+
 }

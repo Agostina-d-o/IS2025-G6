@@ -1,12 +1,14 @@
 package org.example.app.controller;
 
 import org.example.app.ServicioUrgencias;
-import org.example.app.controller.dto.AtencionDTO;
 import org.example.app.controller.dto.IngresoDTO;
 import org.example.app.controller.dto.IngresoFinalizadoDTO;
 import org.example.app.controller.dto.IngresoPendienteDTO;
+import org.example.app.controller.dto.AutoridadDTO;
+import org.example.domain.Autoridad;
 import org.example.domain.Ingreso;
 import org.example.domain.Medico;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +27,13 @@ public class IngresoController {
     }
 
     @PostMapping("/ingresos")
-    public void registrarIngreso(@RequestBody IngresoDTO dto) {
+    public ResponseEntity<?> registrarIngreso(@RequestBody IngresoDTO dto) {
+
+        if (dto.autoridad != Autoridad.ENFERMERA) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "No tiene permiso para registrar urgencias"));
+        }
+
         servicioUrgencias.registrarUrgencia(
                 dto.cuilPaciente,
                 dto.getEnfermera(),
@@ -37,7 +45,10 @@ public class IngresoController {
                 dto.presionSistolica,
                 dto.presionDiastolica
         );
+
+        return ResponseEntity.ok(Map.of("message", "Ingreso registrado con éxito"));
     }
+
 
     @GetMapping("/pendientes")
     public List<IngresoPendienteDTO> obtenerPendientes() {
@@ -62,7 +73,13 @@ public class IngresoController {
     }
 
     @PostMapping("/atender")
-    public ResponseEntity<Map<String, Object>> atenderProximo() {
+    public ResponseEntity<Map<String, Object>> atenderProximo(@RequestBody AutoridadDTO dto) {
+
+        if (dto.autoridad() != Autoridad.MEDICO) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "No tiene permiso para reclamar pacientes"));
+        }
+
         Ingreso ingreso = servicioUrgencias.atenderProximoPaciente();
 
         Map<String, Object> body = new HashMap<>();
@@ -79,12 +96,19 @@ public class IngresoController {
             String nombreMedico,
             String apellidoMedico,
             String emailMedico,
-            String matriculaMedico
+            String matriculaMedico,
+            Autoridad autoridad
     ) {}
 
 
     @PostMapping("/finalizar")
     public ResponseEntity<Map<String, Object>> finalizar(@RequestBody FinalizarIngresoRequest request) {
+
+        if (request.autoridad() != Autoridad.MEDICO) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "No tiene permiso para finalizar ingresos"));
+        }
+
         Medico medico = new Medico(
                 null,
                 request.nombreMedico(),
@@ -107,20 +131,16 @@ public class IngresoController {
     }
 
 
-    @PostMapping("/ingresos/{id}/atencion")
-    public ResponseEntity<String> registrarAtencion(@PathVariable Long id, @RequestBody AtencionDTO dto) {
-        try {
-            servicioUrgencias.registrarAtencion(id, dto);
-            return ResponseEntity.ok("Atención registrada correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
-        }
-    }
-
-
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity
                 .badRequest()
                 .body(Map.of("message", ex.getMessage()));

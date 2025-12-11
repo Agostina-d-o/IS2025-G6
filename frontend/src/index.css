@@ -35,9 +35,10 @@ button {
   transition: background 0.3s;
 }
 
-button:hover {
+button:hover:not(.boton-verde):not(.boton-rojo) {
   background-color: var(--color-primary-hover);
 }
+
 
 input, select {
   font-size: 1rem;
@@ -115,11 +116,30 @@ h2 {
   color:#0f172a;
   display:flex; align-items:center; gap:10px;
 }
-.section-title::before{
-  content:"";
-  width:8px; height:22px; border-radius:6px;
-  background: linear-gradient(180deg,#2563eb,#10b981);
+.center-title {
+  text-align: center;
+  justify-content: center;
+  position: relative;
 }
+
+.center-title::before,
+.center-title::after {
+  content: "";
+  width: 8px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #2563eb, #10b981);
+  display: inline-block;
+}
+
+.center-title::before {
+  margin-right: 12px;
+}
+
+.center-title::after {
+  margin-left: 12px;
+}
+
 
 
 .card{
@@ -309,3 +329,26 @@ html, body {
 .card.finalizado:hover {
   background-color: #eefcf5;
 }
+.center-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+
+.center-buttons .btn-large {
+  padding: 0.8rem 1.1rem;
+  font-size: 1.1rem;
+  border-radius: 12px;
+}
+
+.navbar .boton-verde:hover {
+  background-color: #059669;
+}
+
+.navbar .boton-rojo:hover {
+  background-color: #d32f2f;
+}
+

@@ -35,7 +35,7 @@ export default function PendientesPage({ usuario }) {
 
   const handleAtender = async () => {
     try {
-      await atenderIngreso();
+      await atenderIngreso(usuario.rol);
       alert(`Próximo ingreso reclamado y puesto EN PROCESO`);
       await cargarTodo();
     } catch (e) { alert(e.message); }
@@ -49,7 +49,8 @@ export default function PendientesPage({ usuario }) {
       nombreMedico: usuario.nombre,
       apellidoMedico: usuario.apellido,
       emailMedico: usuario.email,
-      matriculaMedico: usuario.matricula
+      matriculaMedico: usuario.matricula,
+      rol: usuario.rol
     };
 
     try {
@@ -123,18 +124,18 @@ export default function PendientesPage({ usuario }) {
 
   return (
     <div>
-      <h2 className="section-title">Cola de Atención</h2>
+      <h2 className="section-title center-title">Cola de Atención</h2>
       {error && <p className="error">Error: {error}</p>}
 
       {rol === "enfermera" && (
-        <div className="cta-group" style={{ marginTop: "1rem", marginBottom: "1.2rem" }}>
-          <Link to="/registrar-paciente" className="btn btn-secondary">
+        <div className="cta-group center-buttons" style={{ marginTop: "1rem", marginBottom: "1.2rem" }}>
+          <Link to="/registrar-paciente" className="btn btn-secondary btn-large">
             Registrar paciente
           </Link>
-          <Link to="/registrar-urgencia" className="btn btn-primary" style={{ background: "#EF476F", color: "#fff" }}>
+          <Link to="/registrar-urgencia" className="btn btn-primary btn-large" style={{ background: "#EF476F", color: "#fff" }}>
             Registrar urgencia
           </Link>
-          <Link to="/pacientes" className="btn btn-primary">
+          <Link to="/pacientes" className="btn btn-primary btn-large">
             Lista de pacientes
           </Link>
         </div>
@@ -167,7 +168,11 @@ export default function PendientesPage({ usuario }) {
           <button
             className="btn btn-primary btn-medium"
             onClick={handleAtender}
-            style={{ minWidth: "260px", justifySelf: "center", whiteSpace: "nowrap" }}
+            style={{ minWidth: "260px", justifySelf: "center", whiteSpace: "nowrap",
+                    paddingTop: "0.75rem",
+                    paddingBottom: "0.75rem",
+                    marginTop: "1.5rem",
+                    marginBottom: "2rem",       }}
           >
             Atender próximo paciente
           </button>

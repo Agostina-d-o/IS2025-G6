@@ -71,7 +71,7 @@ public class ModuloUrgenciasStepDefinitions {
         for(Map<String, String> fila: tabla) {
             String cuil = fila.get("Cuil");
 
-            /*String informe = fila.get("Informe");
+            /*String diagnostico = fila.get("Informe");
             NivelEmergencia nivelEmergencia = Arrays.stream(NivelEmergencia.values())
                     .filter(nivel -> nivel.tieneNombre(fila.get("Nivel de Emergencia")))
                     .findFirst()
