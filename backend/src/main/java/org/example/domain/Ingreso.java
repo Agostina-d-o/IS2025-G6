@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class Ingreso implements Comparable<Ingreso>{
     private static long SEQ = 1L;
     private final long id;
-    private String diagnostico;
     Paciente paciente;
     Enfermera enfermera;
     Medico medico;
@@ -96,10 +95,7 @@ public class Ingreso implements Comparable<Ingreso>{
 
     public void marcarEnProceso() { this.estado = EstadoIngreso.EN_PROCESO; }
 
-    public void finalizar(String diagnostico) {
-        this.diagnostico = diagnostico;
-        this.estado = EstadoIngreso.FINALIZADO;
-    }
+
 
     public Temperatura getTemperatura() {
         return temperatura;
@@ -125,7 +121,7 @@ public class Ingreso implements Comparable<Ingreso>{
         return medico;
     }
 
-    //Atención médica asociada a este ingreso (puede ser null si todavía no lo atendieron).
+    //Atención médica asociada a este ingreso
     public Atencion getAtencion() {
         return atencion;
     }
