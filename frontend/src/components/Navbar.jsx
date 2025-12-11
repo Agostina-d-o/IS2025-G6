@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
+import "../styles/Navbar.css";
 
 export default function Navbar({ usuario, onLogout }) {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function Navbar({ usuario, onLogout }) {
   return (
     <div className="navbar">
       <div>
-        <strong>🏥 Guardia Clínica</strong>
+        <strong>🏥 Guardia Clínica IS</strong>
         {usuario && (
           <div style={{ fontSize: ".9rem", opacity: 0.8 }}>
             {nombreVisible} ({(usuario.rol ?? "").toString().toUpperCase()})
@@ -31,10 +32,12 @@ export default function Navbar({ usuario, onLogout }) {
       {usuario && (
         <div style={{ display: "flex", gap: "16px" }}>
           <Link to="/pendientes">
-            <button className="btn btn-secondary">Ingresos Pendientes</button>
+            <button className="navbar-button boton-verde">Ingresos</button>
           </Link>
 
-          <button onClick={handleLogout} className="btn btn-primary">
+          <button className="navbar-button boton-rojo"
+                    onClick={() => {if (window.confirm("¿Seguro que desea cerrar sesión?"))
+                        {handleLogout();  } }}>
             Cerrar sesión
           </button>
         </div>

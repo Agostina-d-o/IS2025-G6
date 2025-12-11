@@ -3,7 +3,9 @@ package org.example.app.controller;
 import org.example.app.ServicioUrgencias;
 import org.example.app.controller.dto.PacienteDTO;
 import org.example.app.controller.dto.PacienteSimpleDTO;
+import org.example.domain.Autoridad;
 import org.example.domain.valueobject.AfiliacionObraSocial;
+import org.example.domain.valueobject.Cuil;
 import org.example.domain.valueobject.Domicilio;
 import org.example.domain.valueobject.ObraSocial;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,12 @@ public class PacienteController {
 
     @PostMapping
     public ResponseEntity<?> registrarPaciente(@RequestBody PacienteDTO dto) {
+
+        if (dto.autoridad != Autoridad.ENFERMERA) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "No tiene permiso para registrar pacientes"));
+        }
+
         try {
 
             int numero = dto.numero != null ? dto.numero : 0;
@@ -35,7 +43,7 @@ public class PacienteController {
             AfiliacionObraSocial afiliacion = null;
             if (dto.codigoObraSocial != null && !dto.codigoObraSocial.isBlank()) {
 
-                ObraSocial obraSocial = new ObraSocial(dto.codigoObraSocial, dto.numeroAfiliado);
+                ObraSocial obraSocial = new ObraSocial(dto.codigoObraSocial, dto.nombreObraSocial);
                 afiliacion = new AfiliacionObraSocial(obraSocial, dto.numeroAfiliado);
             }
 
@@ -64,13 +72,24 @@ public class PacienteController {
     }
 
     @GetMapping("/{cuil}")
-    public ResponseEntity<PacienteSimpleDTO> buscarPorCuil(@PathVariable String cuil) {
-        return servicioUrgencias.listarPacientesRegistrados().stream()
-                .filter(p -> p.getCuil().equals(cuil))
-                .findFirst()
-                .map(PacienteSimpleDTO::from)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> buscarPorCuil(@PathVariable String cuil) {
+        try {
+            var cuilObj = new Cuil(cuil);
+
+            return servicioUrgencias.listarPacientesRegistrados().stream()
+                    .filter(p -> p.getCuil().equals(cuilObj))
+                    .findFirst()
+                    .map(PacienteSimpleDTO::from)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        }
     }
+
+
 
 }

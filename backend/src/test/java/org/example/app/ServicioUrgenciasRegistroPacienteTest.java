@@ -41,7 +41,7 @@ class ServicioUrgenciasRegistroPacienteTest {
 
         // Validación
         assertNotNull(p);
-        assertEquals(cuil, p.getCuil());
+        assertEquals(cuil, p.getCuil().getValor());
         verify(repoPacientes, times(1)).guardarPaciente(any(Paciente.class));
         verify(validadorOS).obraSocialExiste("OSDE");
         verify(validadorOS).estaAfiliado(cuil, "OSDE", "ABC123");

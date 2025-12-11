@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import "../styles/RegisterUserForm.css";
 
 export default function RegisterUserForm() {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ export default function RegisterUserForm() {
   const [rol, setRol] = useState("ENFERMERA");
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
+  const [matricula, setMatricula] = useState("");
   const [error, setError] = useState(null);
   const [cargando, setCargando] = useState(false);
 
@@ -17,12 +19,10 @@ export default function RegisterUserForm() {
     e.preventDefault();
     setError(null);
 
-    // Validaciones simples
     if (!nombre.trim() || !apellido.trim()) {
       setError("Nombre y apellido son obligatorios");
       return;
     }
-    // Si querés exigir específicamente .com:
     if (!email.includes("@") || !email.endsWith(".com")) {
       setError("Ingresá un email válido que termine en .com");
       return;
@@ -31,12 +31,23 @@ export default function RegisterUserForm() {
       setError("La contraseña debe tener al menos 8 caracteres");
       return;
     }
+    if ((rol === "ENFERMERA" || rol === "MEDICO") && !matricula.trim()) {
+      setError("La matrícula es obligatoria para médicos y enfermeras");
+      return;
+    }
 
     setCargando(true);
     try {
-      await register(email, contrasenia, rol, nombre.trim(), apellido.trim());
+      await register(
+        email,
+        contrasenia,
+        rol,
+        nombre.trim(),
+        apellido.trim(),
+        matricula.trim()
+      );
       alert("Usuario registrado correctamente. Ahora podés iniciar sesión.");
-      navigate("/"); // ir al login
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -48,26 +59,26 @@ export default function RegisterUserForm() {
     <form onSubmit={handleSubmit} className="formulario">
       <h2>Registrarse</h2>
 
-      <label>
-        Nombre:
-        <input
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          required
-        />
-      </label>
+      <div className="nombre-apellido">
+        <div>
+          <label>Nombre:</label>
+          <input
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Apellido:</label>
+          <input
+            value={apellido}
+            onChange={(e) => setApellido(e.target.value)}
+            required
+          />
+        </div>
+      </div>
 
-      <label>
-        Apellido:
-        <input
-          value={apellido}
-          onChange={(e) => setApellido(e.target.value)}
-          required
-        />
-      </label>
-
-      <label>
-        Email:
+      <label>Email:
         <input
           type="email"
           value={email}
@@ -76,8 +87,7 @@ export default function RegisterUserForm() {
         />
       </label>
 
-      <label>
-        Contraseña:
+      <label>Contraseña:
         <input
           type="password"
           value={contrasenia}
@@ -86,13 +96,23 @@ export default function RegisterUserForm() {
         />
       </label>
 
-      <label>
-        Rol:
-        <select value={rol} onChange={(e) => setRol(e.target.value)}>
-          <option value="ENFERMERA">Enfermera</option>
-          <option value="MEDICO">Médico</option>
-        </select>
-      </label>
+      <div className="rol-matricula">
+        <div>
+          <label>Rol:</label>
+          <select value={rol} onChange={(e) => setRol(e.target.value)} required>
+            <option value="ENFERMERA">Enfermera</option>
+            <option value="MEDICO">Médico</option>
+          </select>
+        </div>
+        <div>
+          <label>Matrícula:</label>
+          <input
+            value={matricula}
+            onChange={(e) => setMatricula(e.target.value)}
+            required
+          />
+        </div>
+      </div>
 
       {error && <p className="error">{error}</p>}
 
@@ -100,7 +120,7 @@ export default function RegisterUserForm() {
         {cargando ? "Registrando..." : "Registrarse"}
       </button>
 
-      <p style={{ textAlign: "center", marginTop: "1rem" }}>
+      <p className="login-register-link">
         ¿Ya tenés cuenta? <a href="/">Iniciar sesión</a>
       </p>
     </form>

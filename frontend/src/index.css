@@ -35,9 +35,10 @@ button {
   transition: background 0.3s;
 }
 
-button:hover {
+button:hover:not(.boton-verde):not(.boton-rojo) {
   background-color: var(--color-primary-hover);
 }
+
 
 input, select {
   font-size: 1rem;
@@ -81,6 +82,7 @@ h2 {
 .btn{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:600; display:inline-block; }
 .btn-primary{ background:#2563eb; color:#fff; }
 .btn-secondary{ background:#10b981; color:#fff; }
+.btn-logout{ background:#e57373; color:#fff; }
 
 /* NAVBAR */
 .navbar{
@@ -106,12 +108,6 @@ h2 {
   flex-wrap:wrap;
 }
 
-.navbar .logout{
-  font-size:.82rem; padding:6px 10px; border-radius:8px;
-  background:#f8fafc; border:1px solid #e5e7eb; color:#111827;
-}
-.navbar .logout:hover{ background:#eef2f7; }
-
 /* ======= TÍTULOS DE SECCIÓN ======= */
 .section-title{
   margin: 10px 0 14px;
@@ -120,11 +116,30 @@ h2 {
   color:#0f172a;
   display:flex; align-items:center; gap:10px;
 }
-.section-title::before{
-  content:"";
-  width:8px; height:22px; border-radius:6px;
-  background: linear-gradient(180deg,#2563eb,#10b981);
+.center-title {
+  text-align: center;
+  justify-content: center;
+  position: relative;
 }
+
+.center-title::before,
+.center-title::after {
+  content: "";
+  width: 8px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #2563eb, #10b981);
+  display: inline-block;
+}
+
+.center-title::before {
+  margin-right: 12px;
+}
+
+.center-title::after {
+  margin-left: 12px;
+}
+
 
 
 .card{
@@ -166,18 +181,99 @@ h2 {
 .v{ color:#0f172a; font-weight:600; }
 .status{ padding:2px 8px; border-radius:8px; background:#f3f4f6; font-weight:700; }
 
-.kv{ display:grid; grid-template-columns: 1fr 1fr; gap:6px 14px; margin-top:10px; }
-.actions{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
-
-/* === GRID de cards: más chicas y centradas === */
-.cards{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 360px)); /* antes: auto-fill/minmax(320px,1fr) */
-  gap:16px;
-  justify-content:center;  /* centra las columnas cuando sobra espacio */
+.kv {
+  display: flex;
+  flex-direction: column;
+  row-gap: 3px;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
-/* === CARD: menos padding, no invade contenido === */
+.kv p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.kv p strong {
+  min-width: 110px;
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rows {
+  margin-bottom: 1rem;
+}
+.separator {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 8px 0 10px;
+}
+.btn-outline {
+  background: transparent;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-outline:hover {
+  background: #e8f0ff;
+}
+
+.btn-small-toggle {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  font-weight: 500;
+  border: 1px solid #2563eb;
+  background: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-small-toggle:hover {
+  background: #e8f0ff;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #eef2f7;
+  color: #0f172a;
+  text-transform: uppercase;
+}
+
+/* Colores por tipo de signo vital */
+.ico-temp { color: #dc2626; }
+.ico-fc   { color: #b91c1c; }
+.ico-fr   { color: #0e7490; }
+.ico-ta   { color: #1e40af; }
+
+.actions{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+
+
+.cards{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
+  gap:16px;
+  justify-content:center;
+}
+
 .card{
   position:relative;
   overflow:hidden;
@@ -186,12 +282,11 @@ h2 {
   background:#fff;
   box-shadow:0 8px 18px rgba(0,0,0,.06);
   transition:transform .15s ease, box-shadow .2s ease;
-  padding:14px 16px;              /* antes 16px 18px */
-  max-width: 360px;               /* asegura tamaño compacto */
+  padding:14px 16px;
+  max-width: 360px;
 }
 .card:hover{ transform: translateY(-2px); box-shadow:0 14px 28px rgba(0,0,0,.08); }
 
-/* === Encabezado: sin márgenes negativos (no tapa nada) === */
 .card-head{
   display:flex; align-items:center; justify-content:space-between; gap:10px;
   margin:0 0 8px;                 /* antes: -16px -18px 12px */
@@ -201,19 +296,17 @@ h2 {
 }
 .card-head h4{ margin:0; font-weight:800; color:#0f172a; }
 
-/* === Borde por nivel más fino === */
 .card.nivel-CRITICA        { border-left:4px solid #ef4444; }
 .card.nivel-EMERGENCIA     { border-left:4px solid #f97316; }
 .card.nivel-URGENCIA       { border-left:4px solid #eab308; }
 .card.nivel-URGENCIA_MENOR { border-left:4px solid #22c55e; }
 .card.nivel-SIN_URGENCIA   { border-left:4px solid #3b82f6; }
 
-/* Detalles: un poco más compactos */
+
 .rows{ gap:4px; }
 .kv{ gap:6px 10px; margin-top:8px; }
 .actions{ margin-top:10px; }
 
-/* Evitar que el texto se corte con el borde curvo */
 .card * { word-wrap: break-word; overflow-wrap: anywhere; }
 
 * { box-sizing: border-box; }
@@ -221,3 +314,41 @@ html, body {
   width: 100%;
   overflow-x: hidden;
 }
+
+.btn-medium {
+  padding: 0.45rem 1.1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+.card.finalizado {
+  background-color: #f9fafb;
+  border-left: 5px solid #10b981;
+}
+
+.card.finalizado:hover {
+  background-color: #eefcf5;
+}
+.center-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+
+.center-buttons .btn-large {
+  padding: 0.8rem 1.1rem;
+  font-size: 1.1rem;
+  border-radius: 12px;
+}
+
+.navbar .boton-verde:hover {
+  background-color: #059669;
+}
+
+.navbar .boton-rojo:hover {
+  background-color: #d32f2f;
+}
+

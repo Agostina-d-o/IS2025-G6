@@ -16,7 +16,7 @@ export async function login(email, contrasenia) {
   return await res.json();
 }
 
-export async function register(email, contrasenia, rol, nombre, apellido) {
+export async function register(email, contrasenia, rol, nombre, apellido, matricula) {
   const res = await fetch(`${API}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -26,6 +26,7 @@ export async function register(email, contrasenia, rol, nombre, apellido) {
       rol,
       nombre,
       apellido,
+      matricula,
     }),
   });
 

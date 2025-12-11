@@ -44,4 +44,3 @@ En IntelliJ: abrir src/test/resources/moduloUrgencias.feature y ejecutar escenar
 - Background con datos comunes (enfermera + pacientes).
 - Tablas con encabezados consistentes (Cuil, Informe, Nivel de Emergencia, etc.).
 - Mensajes de error textuales y exactos.
-- -

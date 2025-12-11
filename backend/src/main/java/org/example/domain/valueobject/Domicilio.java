@@ -7,7 +7,7 @@ public class Domicilio {
 
     public Domicilio(String calle, int numero, String localidad) {
         if (calle == null || calle.isBlank()) throw new IllegalArgumentException("Calle es obligatoria");
-        if (numero <= 0) throw new IllegalArgumentException("Número inválido");
+        if (numero <= 0) throw new IllegalArgumentException("Número nulo o inválido");
         if (localidad == null || localidad.isBlank()) throw new IllegalArgumentException("Localidad es obligatoria");
         this.calle = calle;
         this.numero = numero;

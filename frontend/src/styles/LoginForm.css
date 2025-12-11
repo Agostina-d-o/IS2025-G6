@@ -1,0 +1,110 @@
+/* Fondo  */
+.login-page, .register-page {
+  margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+      url('/src/assets/fondo-clinica.jpg') center/cover no-repeat;
+    backdrop-filter: blur(2px);
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(2px);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+/* Centrado total del formulario */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilo del formulario */
+.formulario {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 360px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.formulario h2 {
+  font-size: 1.6rem; /* antes: 2rem */
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Inputs bonitos */
+input {
+  padding: 0.65rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-top: 4px;
+  margin-bottom: 1rem;
+  font-size: 1.05rem; /* antes: 1.1rem */
+}
+
+input:focus {
+  outline: none;
+  border-color: #2b7cff;
+  box-shadow: 0 0 4px #2b7cff;
+}
+
+/* Botón */
+button {
+  background-color: #2b7cff;
+  color: white;
+  border: none;
+  padding: 0.7rem;
+  width: 50%;
+  font-size: 1.05rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #205dcf;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Error */
+.error {
+  background-color: #ffe5e5;
+  color: #cc0000;
+  padding: 0.6rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
