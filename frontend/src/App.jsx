@@ -47,7 +47,7 @@ export default function App() {
       <Routes>
         {/* Home */}
         <Route
-          path="/"
+          path="/login"
           element={
             usuario ? (
               <Navigate to="/pendientes" />
@@ -105,6 +105,13 @@ export default function App() {
         />
 
         <Route path="/pacientes" element={<PacientesRegistradosPage />} />
+
+        {/* Redirección de la raíz a /login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        {/* Para cualquier otra ruta inválida */}
+        <Route path="*" element={<Navigate to="/login" />} />
+
       </Routes>
     </Router>
   );

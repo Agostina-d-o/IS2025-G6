@@ -1,10 +1,10 @@
 import React from "react";
 import LoginForm from "../components/LoginForm";
 import { useNavigate, Link } from "react-router-dom";
+import "../styles/LoginPage.css";
 
 export default function LoginPage({ setUsuario }) {
   const navigate = useNavigate();
-
 
   const handleLogin = (usuario) => {
     setUsuario(usuario);
@@ -15,8 +15,9 @@ export default function LoginPage({ setUsuario }) {
 
   return (
     <div className="login-page">
+      <h1 className="titulo-app">🏥 Guardia Clínica IS</h1>
       <LoginForm onLogin={handleLogin} />
-      <p style={{ marginTop: "1rem", textAlign: "center" }}>
+      <p className="registro-link">
         ¿No tenés cuenta? <Link to="/register">Registrate acá</Link>
       </p>
     </div>

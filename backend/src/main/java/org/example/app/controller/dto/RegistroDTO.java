@@ -8,5 +8,6 @@ public class RegistroDTO {
     public Autoridad rol;
     public String nombre;
     public String apellido;
+    public String matricula;
 }
 

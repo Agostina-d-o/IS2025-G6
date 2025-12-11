@@ -1,25 +1,34 @@
 package org.example.domain;
 
+import java.time.Duration;
+
 public enum NivelEmergencia {
-    CRITICA("Critica", 0),
-    EMERGENCIA("Emergencia", 1),
-    URGENCIA("Urgencia",2),
-    URGENCIA_MENOR("Urgencia Menor",3),
-    SIN_URGENCIA("Sin Urgencia",4),;
 
-    String nombre;
-    Integer prioridad;
+    CRITICA       (new Nivel(0, "CRITICA",         Duration.ofMinutes(0))),
+    EMERGENCIA    (new Nivel(1, "EMERGENCIA",      Duration.ofMinutes(10))),
+    URGENCIA      (new Nivel(2, "URGENCIA",        Duration.ofMinutes(30))),
+    URGENCIA_MENOR(new Nivel(3, "URGENCIA MENOR",  Duration.ofHours(1))),
+    SIN_URGENCIA  (new Nivel(4, "SIN URGENCIA",    Duration.ofHours(2)));
 
-    NivelEmergencia(String nombre, Integer prioridad){
-        this.nombre = nombre;
-        this.prioridad = prioridad;
+    private final Nivel nivel;
+
+    NivelEmergencia(Nivel nivel) {
+        this.nivel = nivel;
     }
 
-    public boolean tieneNombre(String nombre){
-        return this.nombre.equals(nombre);
+    public boolean tieneNombre(String nombre) {
+        if (nombre == null) return false;
+        return this.nivel.getNombre().equalsIgnoreCase(nombre);
     }
 
-    public int compararCon(NivelEmergencia otro){
-        return this.prioridad.compareTo(otro.prioridad);
+    /**
+     * Compara prioridades: menor número de nivel = más prioridad.
+     */
+    public int compararCon(NivelEmergencia otro) {
+        return Integer.compare(this.nivel.getNivel(), otro.nivel.getNivel());
+    }
+
+    public Nivel getNivel() {
+        return nivel;
     }
 }

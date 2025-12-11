@@ -25,7 +25,7 @@ public record IngresoPendienteDTO(
                 i.getFechaIngreso().toString(),
                 nombreCompleto,
                 nombreCompletoEnfermera,
-                i.getTemperatura(),
+                i.getTemperatura().getValor(),
                 i.getFrecuenciaCardiaca().getValorFormateado(),
                 i.getFrecuenciaRespiratoria().getValorFormateado(),
                 i.getTensionArterial().getValorFormateado(),

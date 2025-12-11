@@ -1,38 +1,29 @@
 package org.example.app;
 
+import jakarta.annotation.PostConstruct;
 import org.example.app.interfaces.RepositorioPacientes;
 import org.example.app.interfaces.ValidadorObraSocial;
 import org.example.domain.*;
 import org.example.domain.queue.ColaAtencion;
-import org.example.domain.valueobject.AfiliacionObraSocial;
-import org.example.domain.valueobject.Domicilio;
+import org.example.domain.valueobject.*;
 import org.springframework.stereotype.Service;
 
-
-//import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ServicioUrgencias {
 
     private final ColaAtencion colaAtencion = new ColaAtencion();
+    private final List<Ingreso> enProceso = new ArrayList<>();
+    private final List<Ingreso> finalizados = new ArrayList<>();
     private ValidadorObraSocial validadorObraSocial;
 
-    //SEGREGACION DE INTERFAZ
-    //PATRON ADAPTADOR
     private RepositorioPacientes dbPacientes;
 
-
-    private final List<Ingreso> enProceso = new java.util.ArrayList<>();
-    private final List<Ingreso> finalizados = new java.util.ArrayList<>();
-
-    //private List<Ingreso> listaEspera;
-
-    //INYECCION DE DEPENDENCIA -> Pruebas
     public ServicioUrgencias(RepositorioPacientes dbPacientes, ValidadorObraSocial validadorObraSocial) {
         this.dbPacientes = dbPacientes;
         this.validadorObraSocial = validadorObraSocial;
-        //this.listaEspera = new ArrayList<>(); //ahora se usa ColaAtencion
     }
 
     // HU-002
@@ -41,20 +32,35 @@ public class ServicioUrgencias {
                                       String apellido,
                                       Domicilio domicilio,
                                       AfiliacionObraSocial afiliacionOpcional) {
+
+        if (nombre == null || nombre.isBlank())
+            throw new IllegalArgumentException("El nombre es obligatorio");
+
+        if (apellido == null || apellido.isBlank())
+            throw new IllegalArgumentException("El apellido es obligatorio");
+
+
+        Cuil cuilVO = new Cuil(cuil);
+
+        if (dbPacientes.buscarPacientePorCuil(cuilVO).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un paciente registrado con ese CUIL");
+        }
+
         if (afiliacionOpcional != null) {
             String codOS = afiliacionOpcional.getObraSocial().getCodigo();
             String nroAf = afiliacionOpcional.getNumeroAfiliado();
             if (!validadorObraSocial.obraSocialExiste(codOS))
-                throw new IllegalArgumentException("No se puede registrar: obra social inexistente");
+                throw new IllegalArgumentException("Obra social inexistente");
             if (!validadorObraSocial.estaAfiliado(cuil, codOS, nroAf))
-                throw new IllegalArgumentException("No se puede registrar: el paciente no está afiliado a la obra social");
+                throw new IllegalArgumentException("El paciente no está afiliado a la obra social");
         }
-        Paciente paciente = new Paciente(cuil, nombre, apellido, domicilio, afiliacionOpcional);
+
+        Paciente paciente = new Paciente(cuilVO, nombre, apellido, domicilio, afiliacionOpcional);
         dbPacientes.guardarPaciente(paciente);
         return paciente;
     }
 
-    // Urgencia: permite auto-alta “mínima” si no existe
+    // HU-001 registrar urgencia
     public void registrarUrgencia(String cuilPaciente,
                                   Enfermera enfermera,
                                   String informe,
@@ -65,28 +71,30 @@ public class ServicioUrgencias {
                                   Float frecuenciaSistolica,
                                   Float frecuenciaDiastolica) {
 
-        if (enfermera == null ||
-                (enfermera.getNombre()==null || enfermera.getNombre().isBlank()) &&
-                        (enfermera.getApellido()==null || enfermera.getApellido().isBlank())) {
-            enfermera = new Enfermera("No", "asignada");
+        Cuil cuilVO = new Cuil(cuilPaciente);
+
+        if (enfermera == null) {
+            throw new IllegalArgumentException("La enfermera es obligatoria para registrar una urgencia");
         }
 
-        Paciente paciente = dbPacientes.buscarPacientePorCuil(cuilPaciente)
+
+        Paciente paciente = dbPacientes.buscarPacientePorCuil(cuilVO)
                 .orElseGet(() -> {
-                    // Alta “provisional” mínima válida (sin OS)
+                    // Alta mínima si no existe
                     Domicilio dummy = new Domicilio("S/D", 1, "San Miguel de Tucumán");
-                    Paciente nuevo = new Paciente(cuilPaciente, "N/D", "N/D", dummy, null);
+                    Paciente nuevo = new Paciente(cuilVO, "N/D", "N/D", dummy, null);
                     dbPacientes.guardarPaciente(nuevo);
                     return nuevo;
                 });
 
-        //  evitar duplicado si ya hay ingreso pendiente o en proceso
-        boolean yaTieneIngresoActivo = colaAtencion.verComoLista().stream()
-                .anyMatch(i -> i.getPaciente().getCuil().equals(cuilPaciente)
-                        && i.getEstado() == EstadoIngreso.PENDIENTE);
-
-        yaTieneIngresoActivo = yaTieneIngresoActivo || enProceso.stream()
-                .anyMatch(i -> i.getPaciente().getCuil().equals(cuilPaciente));
+        // evitar duplicado si ya hay ingreso activo
+        boolean yaTieneIngresoActivo =
+                colaAtencion.verComoLista().stream()
+                        .anyMatch(i -> i.getPaciente().getCuil().equals(cuilVO)
+                                && i.getEstado() == EstadoIngreso.PENDIENTE)
+                        ||
+                        enProceso.stream()
+                                .anyMatch(i -> i.getPaciente().getCuil().equals(cuilVO));
 
         if (yaTieneIngresoActivo) {
             throw new IllegalStateException("Ya existe un ingreso pendiente o en proceso para este paciente.");
@@ -108,23 +116,57 @@ public class ServicioUrgencias {
     }
 
     public List<Ingreso> obtenerIngresosPendientes() {
-        // solo los que están en la cola y siguen en estado PENDIENTE
         return colaAtencion.verComoLista().stream()
                 .filter(i -> i.getEstado() == EstadoIngreso.PENDIENTE)
                 .toList();
     }
 
+    public Ingreso atenderProximoPaciente() {
+        if (colaAtencion.estaVacia()) {
+            throw new IllegalStateException("No hay ingresos pendientes en la lista de espera.");
+        }
+        Ingreso siguiente = colaAtencion.atender();
+        siguiente.marcarEnProceso();
+        enProceso.add(siguiente);
+        return siguiente;
+    }
+
+    public Ingreso finalizarIngreso(long idIngreso, String diagnostico, Medico medico) {
+        Ingreso ingreso = enProceso.stream()
+                .filter(i -> i.getId() == idIngreso)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No se encontró un ingreso EN_PROCESO con el id " + idIngreso));
+
+        if (ingreso.getAtencion() != null) {
+            throw new IllegalStateException("Este ingreso ya fue finalizado anteriormente.");
+        }
+
+        Atencion atencion = new Atencion(medico, diagnostico);
+        ingreso.setAtencion(atencion);
+        ingreso.setEstado(EstadoIngreso.FINALIZADO);
+
+        enProceso.remove(ingreso);
+        finalizados.add(ingreso);
+
+        return ingreso;
+    }
+
+
     public List<Ingreso> obtenerIngresosEnProceso() {
-        return List.copyOf(enProceso);
+        return new ArrayList<>(enProceso);
     }
 
     public List<Ingreso> obtenerIngresosFinalizados() {
-        return List.copyOf(finalizados);
+        return new ArrayList<>(finalizados);
     }
 
-
-    public java.util.List<org.example.domain.Paciente> listarPacientesRegistrados() {
+    public List<Paciente> listarPacientesRegistrados() {
         return dbPacientes.listarTodos();
+    }
+
+    @PostConstruct
+    public void resetearIds() {
+        Ingreso.resetSecuencia();
     }
 
 }

@@ -1,4 +1,3 @@
-
 const API = (import.meta?.env?.VITE_API_BASE) ?? "http://localhost:8080/api";
 
 export async function crearPaciente(dto) {
@@ -9,14 +8,31 @@ export async function crearPaciente(dto) {
   });
 
   if (!resp.ok) {
-    const text = await resp.text();
-    throw new Error(`POST /pacientes ${resp.status}: ${text}`);
+    let msg = "No se pudo registrar el paciente";
+
+    try {
+      // El backend devuelve { "message": "CUIL inválido (11 dígitos)" }
+      const data = await resp.json();
+      if (data && data.message) {
+        msg = data.message;
+      }
+    } catch {
+      // Si por alguna razón no es JSON, usamos el texto crudo
+      try {
+        const text = await resp.text();
+        if (text) msg = text;
+      } catch {
+        // ignoramos, nos quedamos con el msg por defecto
+      }
+    }
+
+    throw new Error(msg);
   }
 
+  // En éxito, tu backend devuelve un String ("Paciente registrado con éxito")
   const text = await resp.text();
   return text;
 }
-
 
 export async function getPacientesRegistrados() {
   const resp = await fetch(`${API}/pacientes`);

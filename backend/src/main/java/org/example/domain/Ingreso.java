@@ -2,7 +2,10 @@ package org.example.domain;
 
 import org.example.domain.valueobject.FrecuenciaCardiaca;
 import org.example.domain.valueobject.FrecuenciaRespiratoria;
+import org.example.domain.valueobject.Temperatura;
 import org.example.domain.valueobject.TensionArterial;
+import org.example.domain.Atencion;
+
 
 import java.time.LocalDateTime;
 
@@ -12,20 +15,24 @@ public class Ingreso implements Comparable<Ingreso>{
     private String diagnostico;
     Paciente paciente;
     Enfermera enfermera;
+    Medico medico;
     LocalDateTime fechaIngreso;
     String informe;
     NivelEmergencia nivelEmergencia;
     EstadoIngreso estado;
-    Float temperatura;
+    Temperatura temperatura;
     FrecuenciaCardiaca frecuenciaCardiaca;
     FrecuenciaRespiratoria frecuenciaRespiratoria;
     TensionArterial tensionArterial;
+
+    private Atencion atencion;
+
 
     public Ingreso(Paciente paciente,
                    Enfermera enfermera,
                    String informe,
                    NivelEmergencia nivelEmergencia,
-                   Float temperatura,
+                   Float temperaturaParam,
                    Float frecuenciaCardiaca,
                    Float frecuenciaRespiratoria,
                    Float frecuenciaSistolica,
@@ -47,7 +54,7 @@ public class Ingreso implements Comparable<Ingreso>{
         this.informe = informe;
         this.nivelEmergencia = nivelEmergencia;
         this.estado = EstadoIngreso.PENDIENTE;
-        this.temperatura = temperatura;
+        this.temperatura = new Temperatura(temperaturaParam);
         this.frecuenciaCardiaca = new FrecuenciaCardiaca(frecuenciaCardiaca);
         this.frecuenciaRespiratoria = new FrecuenciaRespiratoria(frecuenciaRespiratoria);
         this.tensionArterial = new TensionArterial(frecuenciaSistolica,frecuenciaDiastolica);
@@ -55,7 +62,7 @@ public class Ingreso implements Comparable<Ingreso>{
 
 
     public String getCuilPaciente(){
-        return this.paciente.getCuil();
+        return this.paciente.getCuil().getValor();
     }
 
     @Override
@@ -67,6 +74,10 @@ public class Ingreso implements Comparable<Ingreso>{
     }
 
     public EstadoIngreso getEstado() { return estado;  }
+    public void setEstado(EstadoIngreso nuevoEstado) {
+        this.estado = nuevoEstado;
+    }
+
 
     public LocalDateTime getFechaIngreso() {return fechaIngreso;  }
 
@@ -78,7 +89,10 @@ public class Ingreso implements Comparable<Ingreso>{
     public long getId() { return id; }
     public Paciente getPaciente() { return paciente; }
     public NivelEmergencia getNivelEmergencia() { return nivelEmergencia; }
-    public String getDiagnostico() { return diagnostico; }
+    public String getDiagnostico() {
+        return atencion != null ? atencion.getDiagnostico() : null;
+    }
+
 
     public void marcarEnProceso() { this.estado = EstadoIngreso.EN_PROCESO; }
 
@@ -87,7 +101,7 @@ public class Ingreso implements Comparable<Ingreso>{
         this.estado = EstadoIngreso.FINALIZADO;
     }
 
-    public Float getTemperatura() {
+    public Temperatura getTemperatura() {
         return temperatura;
     }
 
@@ -106,4 +120,28 @@ public class Ingreso implements Comparable<Ingreso>{
     public TensionArterial getTensionArterial() {
         return tensionArterial;
     }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    //Atención médica asociada a este ingreso (puede ser null si todavía no lo atendieron).
+    public Atencion getAtencion() {
+        return atencion;
+    }
+
+    public void setAtencion(Atencion atencion) {
+        if (this.atencion != null)
+            throw new IllegalStateException("Este ingreso ya fue atendido");
+
+        this.atencion = atencion;
+        this.medico = atencion.getMedico();
+    }
+
+
+    public static void resetSecuencia() {
+        SEQ = 1;
+    }
+
+
 }

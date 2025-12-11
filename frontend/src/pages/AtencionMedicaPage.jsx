@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPendientes, atenderIngreso } from "../api/ingresos";
+import { getPendientes, atenderIngreso, finalizarIngreso } from "../api/ingresos";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 export default function AtencionMedicaPage({ usuario }) {
@@ -11,22 +11,39 @@ export default function AtencionMedicaPage({ usuario }) {
   const id = searchParams.get("id");
 
   useEffect(() => {
-    getPendientes().then((todos) => {
-      const encontrado = todos.find((i) => i.id === Number(id));
-      if (encontrado) setIngreso(encontrado);
-      else setError("Ingreso no encontrado.");
-    });
+    async function fetchAndAtender() {
+      try {
+        const todos = await getPendientes();
+        const encontrado = todos.find((i) => i.id === Number(id));
+
+        if (!encontrado) {
+          setError("Ingreso no encontrado.");
+          return;
+        }
+
+        await atenderIngreso(); // Reclamar el ingreso al médico actual
+        setIngreso(encontrado);
+      } catch (err) {
+        setError("Error al reclamar el ingreso.");
+      }
+    }
+
+    fetchAndAtender();
   }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await atenderIngreso({
-        idIngreso: Number(id),
-        diagnostico,
+      const medico = {
+        nombreMedico: usuario.nombre,
+        apellidoMedico: usuario.apellido,
         emailMedico: usuario.email,
-      });
-      navigate("/pendientes");
+        matriculaMedico: usuario.matricula,
+      };
+
+      await finalizarIngreso(id, diagnostico, medico);
+      navigate("/pendientes"); // volver a la lista
     } catch (err) {
       setError(err.message);
     }
@@ -37,12 +54,12 @@ export default function AtencionMedicaPage({ usuario }) {
   return (
     <div className="formulario">
       <h2>Atención Médica</h2>
+
       <p>
-        <strong>Paciente:</strong> {ingreso.paciente.nombre}{" "}
-        {ingreso.paciente.apellido}
+        <strong>Paciente:</strong> {ingreso.paciente.nombre} {ingreso.paciente.apellido}
       </p>
       <p>
-        <strong>Nivel:</strong> {ingreso.nivelEmergencia.nombre}
+        <strong>Nivel de Emergencia:</strong> {ingreso.nivelEmergencia.nombre}
       </p>
 
       <form onSubmit={handleSubmit}>
