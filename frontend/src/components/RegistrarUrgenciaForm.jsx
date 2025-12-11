@@ -64,10 +64,10 @@ export default function RegistrarUrgenciaForm({
         if (start !== -1 && end !== -1) {
           const jsonText = backendMessage.substring(start, end);
           const parsed = JSON.parse(jsonText);
-          backendMessage = parsed.message; // solo el mensaje limpio
+          backendMessage = parsed.message;
         }
       } catch {
-        // si falla, deja backendMessage como está
+
       }
 
       setLookup({
@@ -330,7 +330,6 @@ const buscarButtonHoverStyle = {
               value={form.informe}
               onChange={(e) => actualizar("informe", e.target.value)}
               placeholder="Breve descripción del estado"
-              required
               disabled={deshabilitado}
             />
           </label>
